@@ -1,0 +1,87 @@
+[
+  {
+    "title": "HEAVEN",
+    "duration": 215,
+    "filePath": "uploads/seed/heaven.mp3",
+    "meaning": "Это светлая, но грустная философская баллада о жизни, смерти и памяти. Главный образ – лодка, отплывающая на рассвете в «новый мир».",
+    "composers": ["MASA WORKS DESIGN"],
+    "artists": ["初音ミク"],
+    "lyrics": [
+      {
+        "language": "ja",
+        "isPrimary": true,
+        "text": "夜が明ける度に\n見えなくなる皆の想い乗せて\n漕ぎだす船に揺られて\n新しい世界へ\nいつか見てた夢の話\n長い時を旅して歌う\n辛い事は無いよ\nだから心からの喜びをあげる",
+        "timings": [
+          { "lineIndex": 0, "startTime": 12000, "endTime": 15400 },
+          { "lineIndex": 1, "startTime": 15500, "endTime": 19200 },
+          { "lineIndex": 2, "startTime": 19300, "endTime": 22800 },
+          { "lineIndex": 3, "startTime": 22900, "endTime": 26100 },
+          { "lineIndex": 4, "startTime": 26200, "endTime": 29800 },
+          { "lineIndex": 5, "startTime": 29900, "endTime": 33500 },
+          { "lineIndex": 6, "startTime": 33600, "endTime": 36700 },
+          { "lineIndex": 7, "startTime": 36800, "endTime": 41200 }
+        ]
+      },
+      {
+        "language": "ru",
+        "isPrimary": false,
+        "text": "НЕБЕСА\n\nКаждый раз, когда рассветает,\nТо, что невидимо становится – все наши чувства,\nУносятся на лодке, что отчаливает, покачиваясь,\nВ новый мир.",
+        "timings": []
+      }
+    ]
+  },
+  {
+    "title": "ドンドルマ",
+    "duration": 198,
+    "filePath": "uploads/seed/dondurma.mp3",
+    "meaning": "Это мрачная, гротескная притча о массовом безумии и зависимостях. Мороженое «Дондорума» — символ чего-то притягательного, но сомнительного.",
+    "composers": ["MASA WORKS DESIGN"],
+    "artists": ["LosstimeLife"],
+    "lyrics": [
+      {
+        "language": "ja",
+        "isPrimary": true,
+        "text": "夏の不思議な市場にだけあるその氷菓\n私があなたに出した評価\nお金を握った子供が群がり\n私の全て、そのドンドルマ",
+        "timings": [
+          { "lineIndex": 0, "startTime": 8000, "endTime": 11500 },
+          { "lineIndex": 1, "startTime": 11600, "endTime": 14200 },
+          { "lineIndex": 2, "startTime": 14300, "endTime": 17800 },
+          { "lineIndex": 3, "startTime": 17900, "endTime": 21500 }
+        ]
+      },
+      {
+        "language": "ru",
+        "isPrimary": false,
+        "text": "ДОНДОРУМА\n\nТолько в летнем таинственном базаре есть это ледяное лакомство.\nЯ вынесла тебе свой приговор.\nДети с зажатыми в кулаках монетками толпятся —\nВсё моё существо — эта Дондорума.",
+        "timings": []
+      }
+    ]
+  },
+  {
+    "title": "BLACKBISHOP",
+    "duration": 224,
+    "filePath": "uploads/seed/blackbishop.mp3",
+    "meaning": "«BLACKBISHOP» – это история женщины, которая потеряла родителей и организует масштабную военную диверсию под кодовым именем «Чёрный епископ».",
+    "composers": ["MASA WORKS DESIGN"],
+    "artists": ["鏡音リン", "初音ミク", "GUMI"],
+    "lyrics": [
+      {
+        "language": "ja",
+        "isPrimary": true,
+        "text": "アメリカ西部のバントライン\nさげた女が乗ってるレッドライン\nシアトルから北、ショアライン\n安いホテルに女がチェックイン",
+        "timings": [
+          { "lineIndex": 0, "startTime": 14200, "endTime": 17800 },
+          { "lineIndex": 1, "startTime": 17900, "endTime": 21300 },
+          { "lineIndex": 2, "startTime": 21400, "endTime": 24900 },
+          { "lineIndex": 3, "startTime": 25000, "endTime": 28600 }
+        ]
+      },
+      {
+        "language": "ru",
+        "isPrimary": false,
+        "text": "BLACKBISHOP (Чёрный епископ)\n\nАмериканский Запад, линия «Бандлайн»\nНа Красную линию садится поникшая женщина.\nОт Сиэтла на север – Шорлайн,\nВ дешёвом отеле она заселяется.",
+        "timings": []
+      }
+    ]
+  }
+]
