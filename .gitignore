@@ -3,3 +3,9 @@
 
 # MCP
 opencode.json
+
+# DEPENDENCES
+node_modules
+package.json
+package-lock.json
+bun.lock
