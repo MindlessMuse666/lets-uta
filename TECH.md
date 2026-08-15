@@ -471,7 +471,7 @@ CONTRACT GAP
 - `src/lib/karaoke/splitter.ts` – функция `splitText(text: string, language: string): string[]` (использует библиотеки).
 - `src/lib/ui/` – все примитивы из раздела 6 (`Button`, `Input`, `TextArea`, `Card`, `EmptyState`, `Badge`), кроме `Player` и `TimelineEditor`.
 - `src/routes/+layout.svelte` – шапка с названием и ссылками «Песни», «Загрузка», «Настройки».
-- `src/app.css` – сброс, css-переменные цветов (#00E5FF, #FF4081, фон, шрифты).
+- `src/app.css` – сброс, css-переменные цветов (#00E5FF, #FF4081, #FFD543, фон, шрифты).
 - `scripts/seed.ts` – скрипт сидирования, читающий `songs_dataset.json` и наполняющий БД песнями с текстами, метаданными и эталонными таймкодами.
 - `.gitignore`: `node_modules`, `.svelte-kit`, `build`, `karaoke.db*`, `uploads/*` (кроме `.gitkeep`).
 
@@ -637,7 +637,7 @@ CONTRACT GAP
 
 - Оптимизация загрузки медиа и кэширование таймкодов.
 - Проверка доступности (a11y, ARIA-атрибуты для плеера и таймлайн-редактора).
-- Плавные микродвижения и визуальная полировка в стилистике Vocaloid (#00E5FF, #FF4081).
+- Плавные микродвижения и визуальная полировка в стилистике Vocaloid (#00E5FF, #FF4081, #FFD543).
 
 ---
 
