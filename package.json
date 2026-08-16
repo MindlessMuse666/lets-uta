@@ -1,0 +1,48 @@
+{
+  "name": "lets-uta",
+  "private": true,
+  "type": "module",
+  "prepare": "svelte-kit sync",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "setup": "tsx scripts/setup.ts",
+    "seed": "tsx scripts/seed.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "knip": "knip",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "playwright test",
+    "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "gate": "npm run format:check && npm run lint && npm run check && npm run knip && npm run test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "@playwright/test": "^1.55.0",
+    "@sveltejs/adapter-node": "^5.3.1",
+    "@sveltejs/kit": "^2.37.0",
+    "@sveltejs/vite-plugin-svelte": "^6.1.4",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.18.0",
+    "eslint": "^9.35.0",
+    "eslint-plugin-svelte": "^3.11.0",
+    "fast-check": "^4.3.0",
+    "knip": "^5.63.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-svelte": "^3.4.0",
+    "svelte": "^5.38.7",
+    "svelte-check": "^4.3.1",
+    "typescript-eslint": "^8.42.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.2.0"
+  }
+}
