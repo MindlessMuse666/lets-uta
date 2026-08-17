@@ -282,6 +282,8 @@
   }
 
   input[type='range'] {
+    box-sizing: border-box;
+    min-width: 0;
     width: 100%;
     accent-color: #ff4081;
     cursor: pointer;

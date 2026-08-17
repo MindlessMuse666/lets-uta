@@ -149,6 +149,7 @@
   }
   h2 {
     margin: 0;
+    overflow-wrap: anywhere;
     font:
       700 2rem/1 Georgia,
       serif;
