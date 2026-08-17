@@ -28,7 +28,19 @@ jobs:
         run: npm ci
 
       - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install --yes ffmpeg
+        shell: bash
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1; then
+            ffmpeg -version | head -n 1
+            exit 0
+          fi
+          sudo apt-get update \
+            -o Acquire::Retries=3 \
+            -o Acquire::http::Timeout=30 \
+            -o Acquire::https::Timeout=30
+          sudo apt-get install --yes --no-install-recommends \
+            -o DPkg::Lock::Timeout=60 \
+            ffmpeg
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
