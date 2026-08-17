@@ -38,3 +38,6 @@ jobs:
 
       - name: Run quality gate
         run: npm run gate
+
+      - name: Build production bundle
+        run: npm run build
