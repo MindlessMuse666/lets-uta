@@ -1,3 +1,10 @@
 {
-  "entry": ["src/lib/karaoke/types.ts"]
+  "entry": [
+    "src/lib/karaoke/types.ts",
+    "src/lib/karaoke/validate.ts",
+    "src/lib/server/lyrics.ts",
+    "src/lib/server/media.ts",
+    "src/lib/server/paths.ts",
+    "src/lib/server/songs.ts"
+  ]
 }
