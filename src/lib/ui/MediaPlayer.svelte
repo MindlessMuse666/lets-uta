@@ -6,9 +6,10 @@
     mediaKind: MediaKind;
     durationMs: number;
     oncurrenttimechange?: (currentTimeMs: number) => void;
+    onplaystatechange?: (isPlaying: boolean) => void;
   };
 
-  let { src, mediaKind, durationMs, oncurrenttimechange }: Props = $props();
+  let { src, mediaKind, durationMs, oncurrenttimechange, onplaystatechange }: Props = $props();
   let mediaElement = $state<HTMLMediaElement>();
   let currentTimeMs = $state(0);
   let volume = $state(0.8);
@@ -42,6 +43,8 @@
       if (mediaElement.paused) await mediaElement.play();
       else mediaElement.pause();
     } catch {
+      isPlaying = false;
+      onplaystatechange?.(false);
       errorMessage = 'Медиафайл не удалось воспроизвести.';
     }
   }
@@ -89,19 +92,23 @@
 
   function handlePlay(): void {
     isPlaying = true;
+    onplaystatechange?.(true);
     errorMessage = null;
   }
 
   function handlePause(): void {
     isPlaying = false;
+    onplaystatechange?.(false);
   }
 
   function handleEnded(): void {
     isPlaying = false;
+    onplaystatechange?.(false);
   }
 
   function handleMediaError(): void {
     isPlaying = false;
+    onplaystatechange?.(false);
     errorMessage = 'Медиафайл не удалось загрузить.';
   }
 </script>

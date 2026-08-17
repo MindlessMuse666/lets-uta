@@ -76,13 +76,11 @@ export function getSongWithDetails(id: number): SongWithDetails | undefined {
       createdAt: string;
       updatedAt: string;
     }>;
-    const lyricIds = lyrics.map((lyric) => lyric.id);
-    const timings = lyricIds.length
+    const primaryLyricId = lyrics.find((lyric) => lyric.isPrimary === 1)?.id;
+    const timings = primaryLyricId
       ? (db
-          .prepare(
-            `SELECT * FROM timings WHERE lyricId IN (${lyricIds.map(() => '?').join(', ')}) ORDER BY lineIndex`
-          )
-          .all(...lyricIds) as SongWithDetails['timings'])
+          .prepare('SELECT * FROM timings WHERE lyricId = ? ORDER BY lineIndex')
+          .all(primaryLyricId) as SongWithDetails['timings'])
       : [];
     return {
       ...song,

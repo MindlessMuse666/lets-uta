@@ -1,4 +1,5 @@
-import type { Language, UploadInput } from './types';
+import { splitText } from './lines';
+import type { SecondaryLanguage, UploadInput } from './types';
 
 const MAX_MEDIA_SIZE = 100 * 1024 * 1024;
 const MAX_TITLE_LENGTH = 200;
@@ -6,11 +7,11 @@ const MAX_LYRIC_LENGTH = 8191;
 const MAX_MEANING_LENGTH = 4000;
 const MAX_PEOPLE = 20;
 const MAX_PERSON_LENGTH = 100;
-const languages = new Set<Language>(['ru', 'ja', 'en']);
+const secondaryLanguages = new Set<SecondaryLanguage>(['ru', 'en']);
 
 type RawSecondaryLyric = {
   text: string;
-  language: Language;
+  language: SecondaryLanguage;
 };
 
 function parsePeople(value: unknown): string[] | null {
@@ -26,8 +27,16 @@ function parsePeople(value: unknown): string[] | null {
   return people;
 }
 
-function parseSecondaryLyrics(value: unknown): RawSecondaryLyric[] | null {
-  if (value === undefined || value === null || value === '') return [];
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function normalizeText(value: string): string {
+  return value.replace(/\r\n?/g, '\n');
+}
+
+function parseSecondaryLyric(value: unknown): RawSecondaryLyric | undefined | null {
+  if (value === undefined || value === null || value === '') return undefined;
 
   let parsed: unknown = value;
   if (typeof value === 'string') {
@@ -37,25 +46,17 @@ function parseSecondaryLyrics(value: unknown): RawSecondaryLyric[] | null {
       return null;
     }
   }
-  if (!Array.isArray(parsed)) return null;
-
-  const lyrics: RawSecondaryLyric[] = [];
-  for (const item of parsed) {
-    if (
-      typeof item !== 'object' ||
-      item === null ||
-      Array.isArray(item) ||
-      typeof item.text !== 'string' ||
-      typeof item.language !== 'string' ||
-      !languages.has(item.language as Language) ||
-      item.text.trim() === '' ||
-      item.text.length > MAX_LYRIC_LENGTH
-    ) {
-      return null;
-    }
-    lyrics.push({ text: item.text, language: item.language as Language });
+  if (!isRecord(parsed)) return null;
+  if (
+    typeof parsed.text !== 'string' ||
+    typeof parsed.language !== 'string' ||
+    !secondaryLanguages.has(parsed.language as SecondaryLanguage) ||
+    parsed.text.trim() === '' ||
+    parsed.text.length > MAX_LYRIC_LENGTH
+  ) {
+    return null;
   }
-  return lyrics;
+  return { text: normalizeText(parsed.text), language: parsed.language as SecondaryLanguage };
 }
 
 function hasAllowedMediaType(file: File): boolean {
@@ -72,8 +73,7 @@ export function validateUploadInput(data: {
   title: unknown;
   file: File | undefined;
   primaryLyric: unknown;
-  primaryLanguage: unknown;
-  secondaryLyrics?: unknown;
+  secondaryLyric?: unknown;
   meaning?: unknown;
   composers?: unknown;
   artists?: unknown;
@@ -90,19 +90,15 @@ export function validateUploadInput(data: {
     fieldErrors.file = 'Неверный формат файла';
   }
 
-  const primaryLyric = typeof data.primaryLyric === 'string' ? data.primaryLyric : '';
+  const primaryLyric =
+    typeof data.primaryLyric === 'string' ? normalizeText(data.primaryLyric) : '';
   if (!primaryLyric.trim()) fieldErrors.primaryLyric = 'Основной текст обязателен';
   else if (primaryLyric.length > MAX_LYRIC_LENGTH) {
     fieldErrors.primaryLyric = 'Текст слишком длинный';
   }
 
-  const primaryLanguage = data.primaryLanguage;
-  if (typeof primaryLanguage !== 'string' || !languages.has(primaryLanguage as Language)) {
-    fieldErrors.primaryLanguage = 'Неверно указан язык';
-  }
-
-  const secondaryLyrics = parseSecondaryLyrics(data.secondaryLyrics);
-  if (!secondaryLyrics) fieldErrors.secondaryLyrics = 'Некорректный список текстов';
+  const secondaryLyric = parseSecondaryLyric(data.secondaryLyric);
+  if (secondaryLyric === null) fieldErrors.secondaryLyric = 'Неверно указан язык';
 
   const meaning = data.meaning === undefined ? '' : data.meaning;
   if (typeof meaning !== 'string') fieldErrors.meaning = 'Некорректное описание';
@@ -113,15 +109,12 @@ export function validateUploadInput(data: {
   const artists = parsePeople(data.artists);
   if (!artists) fieldErrors.artists = 'Некорректный список исполнителей';
 
-  if (secondaryLyrics && typeof primaryLanguage === 'string') {
-    const usedLanguages = new Set([primaryLanguage]);
-    for (const lyric of secondaryLyrics) {
-      if (usedLanguages.has(lyric.language)) {
-        fieldErrors.secondaryLyrics = 'Язык уже используется';
-        break;
-      }
-      usedLanguages.add(lyric.language);
-    }
+  if (
+    secondaryLyric &&
+    primaryLyric.trim() &&
+    splitText(secondaryLyric.text).length !== splitText(primaryLyric).length
+  ) {
+    fieldErrors.secondaryLyric = 'Количество строк перевода должно совпадать с японским текстом';
   }
 
   if (Object.keys(fieldErrors).length > 0) return { ok: false, fieldErrors };
@@ -132,11 +125,37 @@ export function validateUploadInput(data: {
       file: data.file as File,
       title,
       primaryLyric,
-      primaryLanguage: primaryLanguage as Language,
-      secondaryLyrics: secondaryLyrics as RawSecondaryLyric[],
+      ...(secondaryLyric ? { secondaryLyric } : {}),
       meaning: (meaning as string).trim() || undefined,
       composers: composers as string[],
       artists: artists as string[]
     }
+  };
+}
+
+export function validateTranslationInput(data: {
+  text: unknown;
+  language: unknown;
+  primaryText: string;
+}):
+  | { ok: true; value: { text: string; language: SecondaryLanguage } }
+  | { ok: false; fieldErrors: Record<string, string> } {
+  const fieldErrors: Record<string, string> = {};
+  const language = data.language;
+  if (typeof language !== 'string' || !secondaryLanguages.has(language as SecondaryLanguage)) {
+    fieldErrors.language = 'Неверно указан язык';
+  }
+
+  const text = typeof data.text === 'string' ? normalizeText(data.text) : '';
+  if (!text.trim()) fieldErrors.text = 'Основной текст обязателен';
+  else if (text.length > MAX_LYRIC_LENGTH) fieldErrors.text = 'Текст слишком длинный';
+  else if (splitText(text).length !== splitText(data.primaryText).length) {
+    fieldErrors.text = 'Количество строк перевода должно совпадать с японским текстом';
+  }
+
+  if (Object.keys(fieldErrors).length > 0) return { ok: false, fieldErrors };
+  return {
+    ok: true,
+    value: { text, language: language as SecondaryLanguage }
   };
 }

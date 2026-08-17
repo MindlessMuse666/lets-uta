@@ -1,12 +1,19 @@
 <script lang="ts">
   type Option = { value: string; label: string };
-  type Props = { label: string; name: string; options: Option[]; value?: string; error?: string };
-  let { label, name, options, value = '', error }: Props = $props();
+  type Props = {
+    label: string;
+    name: string;
+    options: Option[];
+    value?: string;
+    error?: string;
+    required?: boolean;
+  };
+  let { label, name, options, value = '', error, required = false }: Props = $props();
 </script>
 
 <label class="field">
   <span>{label}</span>
-  <select {name} {value} aria-invalid={error ? 'true' : undefined}>
+  <select {name} {value} {required} aria-invalid={error ? 'true' : undefined}>
     {#each options as option (option.value)}
       <option value={option.value}>{option.label}</option>
     {/each}

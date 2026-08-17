@@ -9,12 +9,20 @@ function formValues(formData: FormData): Record<string, string> {
   return {
     title: String(formData.get('title') ?? ''),
     primaryLyric: String(formData.get('primaryLyric') ?? ''),
-    primaryLanguage: String(formData.get('primaryLanguage') ?? 'ru'),
-    secondaryLyrics: String(formData.get('secondaryLyrics') ?? ''),
+    secondaryLanguage: String(formData.get('secondaryLanguage') ?? ''),
+    secondaryLyricText: String(formData.get('secondaryLyricText') ?? ''),
     meaning: String(formData.get('meaning') ?? ''),
     composers: String(formData.get('composers') ?? ''),
     artists: String(formData.get('artists') ?? '')
   };
+}
+
+function secondaryLyricFromForm(
+  formData: FormData
+): { language: string; text: string } | undefined {
+  const language = String(formData.get('secondaryLanguage') ?? '');
+  const text = String(formData.get('secondaryLyricText') ?? '');
+  return language || text ? { language, text } : undefined;
 }
 
 export const actions: Actions = {
@@ -25,8 +33,7 @@ export const actions: Actions = {
       title: formData.get('title'),
       file: rawFile instanceof File ? rawFile : undefined,
       primaryLyric: formData.get('primaryLyric'),
-      primaryLanguage: formData.get('primaryLanguage'),
-      secondaryLyrics: formData.get('secondaryLyrics'),
+      secondaryLyric: secondaryLyricFromForm(formData),
       meaning: formData.get('meaning'),
       composers: formData.get('composers'),
       artists: formData.get('artists')
@@ -59,12 +66,17 @@ export const actions: Actions = {
       songId = song.id;
       createLyric({
         songId,
-        language: validation.value.primaryLanguage,
+        language: 'ja',
         isPrimary: true,
         text: validation.value.primaryLyric
       });
-      for (const lyric of validation.value.secondaryLyrics) {
-        createLyric({ songId, language: lyric.language, isPrimary: false, text: lyric.text });
+      if (validation.value.secondaryLyric) {
+        createLyric({
+          songId,
+          language: validation.value.secondaryLyric.language,
+          isPrimary: false,
+          text: validation.value.secondaryLyric.text
+        });
       }
     } catch {
       if (songId !== undefined) deleteSong(songId);

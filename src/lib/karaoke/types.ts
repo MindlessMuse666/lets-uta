@@ -1,4 +1,5 @@
 export type Language = 'ru' | 'ja' | 'en';
+export type SecondaryLanguage = 'ru' | 'en';
 export type MediaKind = 'audio' | 'video';
 export type TimingSource = 'auto' | 'manual' | 'import';
 export type Theme = 'light' | 'dark';
@@ -61,11 +62,10 @@ export type UploadInput = {
   file: File;
   title: string;
   primaryLyric: string;
-  primaryLanguage: Language;
-  secondaryLyrics: Array<{
+  secondaryLyric?: {
     text: string;
-    language: Language;
-  }>;
+    language: SecondaryLanguage;
+  };
   meaning?: string;
   composers: string[];
   artists: string[];

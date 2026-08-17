@@ -32,9 +32,9 @@ describe('database foundation', () => {
           "SELECT name FROM sqlite_master WHERE type = 'index' AND name LIKE 'idx_%' ORDER BY name"
         )
         .all()
-    ).toHaveLength(7);
+    ).toHaveLength(8);
     expect(db.pragma('foreign_keys', { simple: true })).toBe(1);
-    expect(db.prepare('SELECT COUNT(*) AS count FROM settings').get()).toEqual({ count: 3 });
+    expect(db.prepare('SELECT COUNT(*) AS count FROM settings').get()).toEqual({ count: 4 });
 
     closeDb(db);
   });
@@ -68,7 +68,7 @@ describe('database foundation', () => {
         `INSERT INTO lyrics (songId, language, isPrimary, text, createdAt, updatedAt)
          VALUES (?, ?, ?, ?, ?, ?)`
       )
-      .run(song.lastInsertRowid, 'ru', 1, 'Строка', now, now);
+      .run(song.lastInsertRowid, 'ja', 1, '一行目', now, now);
     db.prepare(
       `INSERT INTO timings (lyricId, lineIndex, startTime, endTime, source, updatedAt)
        VALUES (?, ?, ?, ?, ?, ?)`

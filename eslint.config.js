@@ -7,7 +7,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   ...svelte.configs['flat/recommended'],
   {
-    ignores: ['.svelte-kit/**', 'build/**', 'coverage/**', 'data/**', 'node_modules/**']
+    ignores: ['.svelte-kit/**', '.venv/**', 'build/**', 'coverage/**', 'data/**', 'node_modules/**']
   },
   {
     files: ['**/*.svelte'],
@@ -17,8 +17,14 @@ export default tseslint.config(
       },
       globals: {
         Event: 'readonly',
+        MouseEvent: 'readonly',
+        document: 'readonly',
+        queueMicrotask: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
         HTMLElement: 'readonly',
         HTMLButtonElement: 'readonly',
+        HTMLDialogElement: 'readonly',
         HTMLInputElement: 'readonly',
         HTMLMediaElement: 'readonly',
         HTMLSelectElement: 'readonly',

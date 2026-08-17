@@ -1,18 +1,86 @@
 <script lang="ts">
   import { getActiveLineIndex, splitText } from '$lib/karaoke/lines';
-  import type { Timing } from '$lib/karaoke/types';
+  import type { Language, Timing } from '$lib/karaoke/types';
 
   type Props = {
     text: string;
     timings?: Timing[];
     currentTimeMs?: number;
     label?: string;
+    language?: Language;
+    isPlaying?: boolean;
+    autoScrollDelayMs?: number;
+    scrollMode?: 'local' | 'page';
   };
 
-  let { text, timings = [], currentTimeMs = 0, label = 'Текст песни' }: Props = $props();
+  let {
+    text,
+    timings = [],
+    currentTimeMs = 0,
+    label = 'Текст песни',
+    language = 'ja',
+    isPlaying = false,
+    autoScrollDelayMs = 3000,
+    scrollMode = 'local'
+  }: Props = $props();
+  let sectionElement = $state<HTMLElement>();
+  let autoScrollTimer: ReturnType<typeof setTimeout> | undefined;
+  let programmaticScroll = false;
   let lines = $derived(splitText(text));
   let activeLineIndex = $derived(getActiveLineIndex(timings, currentTimeMs));
   let timingByLine = $derived(new Map(timings.map((timing) => [timing.lineIndex, timing])));
+  let rootClass = $derived(`lyrics lyrics-${language} lyrics-${scrollMode}`);
+
+  function hasTextSelection(): boolean {
+    return Boolean(document.getSelection()?.toString());
+  }
+
+  function clearAutoScrollTimer(): void {
+    if (autoScrollTimer) {
+      clearTimeout(autoScrollTimer);
+      autoScrollTimer = undefined;
+    }
+  }
+
+  function prefersReducedMotion(): boolean {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function scrollActiveLine(): void {
+    if (!sectionElement || activeLineIndex < 0) return;
+    const line = sectionElement.querySelector<HTMLElement>(
+      `[data-line-index="${activeLineIndex}"]`
+    );
+    if (!line) return;
+
+    programmaticScroll = true;
+    line.scrollIntoView({
+      block: 'center',
+      inline: 'nearest',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth'
+    });
+    window.setTimeout(() => {
+      programmaticScroll = false;
+    }, 150);
+  }
+
+  function scheduleAutoScroll(): void {
+    clearAutoScrollTimer();
+    if (
+      !sectionElement ||
+      !isPlaying ||
+      timings.length === 0 ||
+      activeLineIndex < 0 ||
+      hasTextSelection()
+    ) {
+      return;
+    }
+    autoScrollTimer = setTimeout(scrollActiveLine, Math.max(0, autoScrollDelayMs));
+  }
+
+  function handleManualScroll(): void {
+    if (!programmaticScroll) scheduleAutoScroll();
+  }
 
   function lineClass(index: number, line: string): string {
     return [
@@ -24,9 +92,41 @@
       .filter(Boolean)
       .join(' ');
   }
+
+  $effect(() => {
+    scheduleAutoScroll();
+    return clearAutoScrollTimer;
+  });
+
+  $effect(() => {
+    if (!sectionElement) return;
+    const resetTimer = () => scheduleAutoScroll();
+    const handleSelectionChange = () => {
+      if (hasTextSelection()) clearAutoScrollTimer();
+      else scheduleAutoScroll();
+    };
+
+    window.addEventListener('pointerdown', resetTimer, { passive: true });
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('wheel', resetTimer, { passive: true });
+    document.addEventListener('selectionchange', handleSelectionChange);
+
+    return () => {
+      window.removeEventListener('pointerdown', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('wheel', resetTimer);
+      document.removeEventListener('selectionchange', handleSelectionChange);
+    };
+  });
 </script>
 
-<section class="lyrics" aria-label={label}>
+<section
+  bind:this={sectionElement}
+  class={rootClass}
+  aria-label={label}
+  data-language={language}
+  onscroll={handleManualScroll}
+>
   {#if lines.length === 0}
     <p class="lyrics-empty">Текст отсутствует.</p>
   {:else}
@@ -47,6 +147,40 @@
 <style>
   .lyrics {
     min-width: 0;
+    --lyric-active: #ff4081;
+    --lyric-selection: #ffd543;
+    scrollbar-color: var(--lyric-active) transparent;
+  }
+
+  .lyrics-local {
+    max-height: min(64vh, 38rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 0.35rem;
+  }
+
+  .lyrics-page {
+    overflow: visible;
+  }
+
+  .lyrics-ja {
+    --lyric-active: #ff4081;
+    --lyric-selection: #ffd543;
+  }
+
+  .lyrics-ru {
+    --lyric-active: #00e5ff;
+    --lyric-selection: #ffd543;
+  }
+
+  .lyrics-en {
+    --lyric-active: #ffd543;
+    --lyric-selection: #ff4081;
+  }
+
+  .lyrics ::selection {
+    background: var(--lyric-selection);
+    color: #1f2024;
   }
 
   .line-list {
@@ -71,8 +205,8 @@
   }
 
   .lyric-line-active {
-    border-left: 4px solid #ff4081;
-    background: color-mix(in srgb, #ff4081 14%, transparent);
+    border-left: 4px solid var(--lyric-active);
+    background: color-mix(in srgb, var(--lyric-active) 14%, transparent);
     color: var(--ink, #1f2024);
     font-weight: 700;
     transform: translateX(0.35rem);
@@ -82,7 +216,7 @@
     position: absolute;
     top: 50%;
     left: -0.85rem;
-    color: #ff4081;
+    color: var(--lyric-active);
     content: '›';
     font:
       700 1.5rem/1 Georgia,

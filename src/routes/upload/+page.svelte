@@ -9,8 +9,8 @@
   type UploadValues = {
     title?: string;
     primaryLyric?: string;
-    primaryLanguage?: string;
-    secondaryLyrics?: string;
+    secondaryLanguage?: string;
+    secondaryLyricText?: string;
     meaning?: string;
     composers?: string;
     artists?: string;
@@ -20,8 +20,8 @@
   let values = $derived({
     title: '',
     primaryLyric: '',
-    primaryLanguage: 'ru',
-    secondaryLyrics: '',
+    secondaryLanguage: '',
+    secondaryLyricText: '',
     meaning: '',
     composers: '',
     artists: '',
@@ -91,19 +91,8 @@
 
     <section class="form-section" aria-labelledby="lyrics-heading">
       <h2 id="lyrics-heading">Тексты</h2>
-      <Select
-        label="Язык основного текста"
-        name="primaryLanguage"
-        value={values.primaryLanguage ?? 'ru'}
-        error={errors.primaryLanguage}
-        options={[
-          { value: 'ru', label: 'Русский' },
-          { value: 'ja', label: '日本語' },
-          { value: 'en', label: 'English' }
-        ]}
-      />
       <TextArea
-        label="Основной текст"
+        label="Основной текст · ja"
         name="primaryLyric"
         value={values.primaryLyric}
         rows={9}
@@ -111,13 +100,25 @@
         hint="Переносы строк сохраняются."
         required
       />
+      <Select
+        label="Язык перевода"
+        name="secondaryLanguage"
+        value={values.secondaryLanguage ?? ''}
+        error={errors.secondaryLyric}
+        options={[
+          { value: '', label: 'Без перевода' },
+          { value: 'ru', label: 'Русский' },
+          { value: 'en', label: 'English' }
+        ]}
+      />
       <TextArea
-        label="Дополнительные тексты"
-        name="secondaryLyrics"
-        value={values.secondaryLyrics}
+        label="Перевод"
+        name="secondaryLyricText"
+        value={values.secondaryLyricText}
         rows={5}
-        error={errors.secondaryLyrics}
-        hint={'Необязательно. JSON-массив: [{"language":"en","text":"..."}]'}
+        error={errors.secondaryLyric}
+        hint="Необязательно. Количество строк должно совпадать с японским текстом."
+        maxlength={8191}
       />
     </section>
 
