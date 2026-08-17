@@ -13,7 +13,7 @@ Use this skill to generate, update, or review the `README.md` file for the **Let
 
 ## 1. Core Principles ("No AI-Slop")
 
-1. **Concrete & Direct Tone**: No generic promotional filler (*"A state-of-the-art solution..."*, *"Empowering music lovers..."*). Explain directly what the application does: local playback, forced alignment, line-by-line discrete karaoke highlights, offline architecture.
+1. **Concrete & Direct Tone**: No generic promotional filler (_"A state-of-the-art solution..."_, _"Empowering music lovers..."_). Explain directly what the application does: local playback, forced alignment, line-by-line discrete karaoke highlights, offline architecture.
 2. **Editorial Cyber-Pop Aesthetic**: Clean typography, disciplined badge colors (`#00E5FF`, `#FF4081`, `#FFD543`), structured tables, clear visual hierarchy.
 3. **Exact Script Alignment**: Every command in the README must match `package.json` and `TECH-TASK.md` without omissions.
 4. **Visual Gallery**: Showcase light/dark theme, side-by-side Japanese and translation layout, manual timing editor, and library views.
@@ -25,7 +25,7 @@ Use this skill to generate, update, or review the `README.md` file for the **Let
 
 ## 2. README.md Standard Template for This Project
 
-```markdown
+````markdown
 <div align="center">
 
 # 🎤 Lets Uta!
@@ -54,12 +54,12 @@ Use this skill to generate, update, or review the `README.md` file for the **Let
   <p><em>Воспроизведение песни: плеер, основной японский текст и синхронизированный русский перевод</em></p>
 </div>
 
-| 📚 Библиотека и фильтры | ⏱️ Ручной редактор таймингов |
-| :---: | :---: |
+|                             📚 Библиотека и фильтры                             |                              ⏱️ Ручной редактор таймингов                               |
+| :-----------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
 | <img src="docs/screenshots/library-view.png" width="440" alt="Каталог песен" /> | <img src="docs/screenshots/timeline-editor.png" width="440" alt="Редактор таймингов" /> |
 
-| 📤 Загрузка медиа и текстов | ⚙️ Настройки и экспорт |
-| :---: | :---: |
+|                           📤 Загрузка медиа и текстов                           |                               ⚙️ Настройки и экспорт                                |
+| :-----------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: |
 | <img src="docs/screenshots/upload-view.png" width="440" alt="Загрузка песни" /> | <img src="docs/screenshots/settings-view.png" width="440" alt="Настройки плеера" /> |
 
 ---
@@ -87,10 +87,12 @@ Use this skill to generate, update, or review the `README.md` file for the **Let
 ## 🚀 Быстрый старт
 
 ### Системные требования
+
 - **Node.js** `22.0.0` или выше
 - **FFmpeg**, установленный в системе и доступный в `$PATH`
 
 ### 1. Клонирование и установка
+
 ```bash
 # Клонирование репозитория
 git clone https://github.com/MindlessMuse666/lets-uta.git
@@ -105,12 +107,13 @@ npm run setup
 # (Опционально) Заполнение базы тестовым набором песен
 npm run seed
 ```
+````
 
 ### 2. Запуск приложения
 
 ```bash
 # Режим разработки
-npm run dev 
+npm run dev
 # или `npm run dev -- --host 127.0.0.1 --port 4173`
 
 # Продакшн-сборка и предпросмотр
@@ -129,22 +132,22 @@ npm run preview
 npm run gate
 ```
 
-| Команда | Назначение |
-| :--- | :--- |
-| `npm run setup` | Проверка Node.js, системного FFmpeg и ONNX-моделей |
-| `npm run seed` | Заполнение базы данных тестовым набором песен |
-| `npm run dev` | Запуск сервера разработки Vite |
-| `npm run build` | Сборка приложения с `@sveltejs/adapter-node` |
-| `npm run preview` | Локальный запуск production-сборки |
-| `npm run test` | Запуск всех тестов (Unit + Integration + E2E) |
-| `npm run test:unit` | Модульные тесты доменной логики и валидации (Vitest) |
-| `npm run test:integration` | Интеграционные тесты БД и воркеров (Vitest) |
-| `npm run test:e2e` | Сквозные браузерные тесты интерфейса (Playwright) |
-| `npm run lint` | Проверка кода через ESLint |
-| `npm run check` | Проверка типов Svelte и TypeScript (`svelte-check`) |
-| `npm run knip` | Поиск неиспользуемых файлов, экспортов и зависимостей |
-| `npm run format` | Автоматическое форматирование кода через Prettier |
-| `npm run format:check` | Проверка форматирования без изменения файлов |
+| Команда                    | Назначение                                            |
+| :------------------------- | :---------------------------------------------------- |
+| `npm run setup`            | Проверка Node.js, системного FFmpeg и ONNX-моделей    |
+| `npm run seed`             | Заполнение базы данных тестовым набором песен         |
+| `npm run dev`              | Запуск сервера разработки Vite                        |
+| `npm run build`            | Сборка приложения с `@sveltejs/adapter-node`          |
+| `npm run preview`          | Локальный запуск production-сборки                    |
+| `npm run test`             | Запуск всех тестов (Unit + Integration + E2E)         |
+| `npm run test:unit`        | Модульные тесты доменной логики и валидации (Vitest)  |
+| `npm run test:integration` | Интеграционные тесты БД и воркеров (Vitest)           |
+| `npm run test:e2e`         | Сквозные браузерные тесты интерфейса (Playwright)     |
+| `npm run lint`             | Проверка кода через ESLint                            |
+| `npm run check`            | Проверка типов Svelte и TypeScript (`svelte-check`)   |
+| `npm run knip`             | Поиск неиспользуемых файлов, экспортов и зависимостей |
+| `npm run format`           | Автоматическое форматирование кода через Prettier     |
+| `npm run format:check`     | Проверка форматирования без изменения файлов          |
 
 ---
 

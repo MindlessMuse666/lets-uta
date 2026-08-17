@@ -66,6 +66,7 @@
 ### Форматирование JSON и индексирование коммитов
 
 - JSON-фикстуры и dataset форматируй только Prettier: `npx prettier --write --parser json <file>`; не выравнивай большие строки и массивы вручную.
+- При форматировании JSON передавай в команду только JSON-файлы; не смешивай `--parser json` с SQL, Markdown, Svelte или TypeScript.
 - В `lyrics[].timings` сохраняй только контрактные целочисленные `lineIndex`, `startTime`, `endTime` в миллисекундах и `source`; тайминги принадлежат только primary `ja`.
 - Перед коммитом проверяй `npx prettier --check <изменённые файлы>` и `git diff --check`.
 - Для раздельных коммитов используй индекс Git: добавляй связанные файлы через `git add <файлы>`, проверяй `git diff --cached --stat`, затем коммить; не смешивай dataset, функциональность, CI и README.
