@@ -1,4 +1,5 @@
 import type { Language, MediaKind, TimingSource } from '../src/lib/karaoke/types';
+import { splitText } from '../src/lib/karaoke/lines';
 
 type DatasetTiming = {
   lineIndex: number;
@@ -37,12 +38,19 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }
 
-function parseTiming(value: unknown): DatasetTiming {
+function parseTiming(value: unknown, durationMs: number): DatasetTiming {
   if (!isRecord(value)) throw new Error('Dataset timing must be an object');
   if (
     typeof value.lineIndex !== 'number' ||
+    !Number.isInteger(value.lineIndex) ||
+    value.lineIndex < 0 ||
     typeof value.startTime !== 'number' ||
+    !Number.isInteger(value.startTime) ||
+    value.startTime < 0 ||
     typeof value.endTime !== 'number' ||
+    !Number.isInteger(value.endTime) ||
+    value.endTime <= value.startTime ||
+    value.endTime > durationMs ||
     typeof value.source !== 'string' ||
     !timingSources.has(value.source as TimingSource)
   ) {
@@ -56,7 +64,7 @@ function parseTiming(value: unknown): DatasetTiming {
   };
 }
 
-function parseLyric(value: unknown): DatasetLyric {
+function parseLyric(value: unknown, durationMs: number): DatasetLyric {
   if (
     !isRecord(value) ||
     typeof value.language !== 'string' ||
@@ -75,7 +83,7 @@ function parseLyric(value: unknown): DatasetLyric {
     language: value.language as Language,
     isPrimary: value.isPrimary,
     text: value.text,
-    timings: value.timings.map(parseTiming)
+    timings: value.timings.map((timing) => parseTiming(timing, durationMs))
   };
 }
 
@@ -95,6 +103,32 @@ function parseSong(value: unknown): DatasetSong {
   ) {
     throw new Error('Dataset song has invalid fields');
   }
+  const lyrics = value.lyrics.map((lyric) => parseLyric(lyric, value.durationMs as number));
+  const primaryLyrics = lyrics.filter((lyric) => lyric.isPrimary);
+  const secondaryLyrics = lyrics.filter((lyric) => !lyric.isPrimary);
+  if (primaryLyrics.length !== 1 || primaryLyrics[0].language !== 'ja') {
+    throw new Error('Dataset must contain exactly one primary ja lyric');
+  }
+  if (secondaryLyrics.length > 1 || secondaryLyrics.some((lyric) => lyric.language === 'ja')) {
+    throw new Error('Dataset must contain at most one ru or en secondary lyric');
+  }
+  const primaryLineCount = splitText(primaryLyrics[0].text).length;
+  if (
+    primaryLyrics[0].timings.some(
+      (timing) => timing.lineIndex < 0 || timing.lineIndex >= primaryLineCount
+    )
+  ) {
+    throw new Error('Dataset primary timings reference an invalid line');
+  }
+  if (secondaryLyrics.some((lyric) => lyric.timings.length > 0)) {
+    throw new Error('Dataset secondary lyrics cannot contain timings');
+  }
+  if (
+    secondaryLyrics.length === 1 &&
+    splitText(secondaryLyrics[0].text).length !== primaryLineCount
+  ) {
+    throw new Error('Dataset secondary lyric line count does not match primary lyric');
+  }
   return {
     title: value.title,
     filePath: value.filePath,
@@ -103,7 +137,7 @@ function parseSong(value: unknown): DatasetSong {
     meaning: value.meaning,
     composers: value.composers,
     artists: value.artists,
-    lyrics: value.lyrics.map(parseLyric)
+    lyrics
   };
 }
 
