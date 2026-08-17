@@ -33,7 +33,7 @@ uploads/*
 .DS_Store
 Thumbs.db
 *.log
-deploy-error.*
+# deploy-error.*
 
 # VENV
 .venv/
