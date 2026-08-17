@@ -12,7 +12,7 @@ export default defineConfig({
     trace: 'on-first-retry'
   },
   webServer: {
-    command: 'npm run seed && npm run dev -- --host 127.0.0.1 --port 4173',
+    command: 'npm run seed && npm run prepare:e2e && npm run dev -- --host 127.0.0.1 --port 4173',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     env: { KARAOKE_DATA_DIR: e2eDataRoot }

@@ -12,7 +12,7 @@ describe('seed dataset parser', () => {
     );
     const songs = parseSongsDataset(raw);
 
-    expect(songs).toHaveLength(2);
+    expect(songs).toHaveLength(3);
     expect(songs[0].lyrics.find((lyric) => lyric.isPrimary)?.language).toBe('ja');
   });
 

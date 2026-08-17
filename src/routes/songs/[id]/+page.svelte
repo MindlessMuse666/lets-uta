@@ -1,10 +1,30 @@
 <script lang="ts">
   import Badge from '$lib/ui/Badge.svelte';
+  import LyricLines from '$lib/ui/LyricLines.svelte';
+  import MediaPlayer from '$lib/ui/MediaPlayer.svelte';
   import { resolve } from '$app/paths';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
   let primaryLyric = $derived(data.song.lyrics.find((lyric) => lyric.isPrimary));
+  let primaryTimings = $derived(
+    primaryLyric ? data.song.timings.filter((timing) => timing.lyricId === primaryLyric.id) : []
+  );
+  let secondaryLyrics = $derived(data.song.lyrics.filter((lyric) => !lyric.isPrimary));
+  let selectedSecondaryId = $state<number | null>(null);
+  let selectedSecondary = $derived(
+    secondaryLyrics.find((lyric) => lyric.id === selectedSecondaryId)
+  );
+  let currentTimeMs = $state(0);
+
+  function selectSecondary(event: Event): void {
+    const value = Number((event.currentTarget as HTMLSelectElement).value);
+    selectedSecondaryId = Number.isInteger(value) ? value : null;
+  }
+
+  function handleCurrentTimeChange(value: number): void {
+    currentTimeMs = value;
+  }
 </script>
 
 <svelte:head><title>{data.song.title} — lets-uta</title></svelte:head>
@@ -12,7 +32,11 @@
 <main class="song-page">
   <a class="back-link" href={resolve('/')}>← библиотека</a>
   <header class="song-header">
-    <p class="eyebrow">{data.song.mediaKind} · {Math.round(data.song.durationMs / 1000)} сек</p>
+    <p class="eyebrow">
+      {data.song.mediaKind === 'video' ? 'видео' : 'аудио'} · {Math.round(
+        data.song.durationMs / 1000
+      )} сек
+    </p>
     <h1>{data.song.title}</h1>
     {#if data.song.meaning}<p class="meaning">{data.song.meaning}</p>{/if}
     <div class="badges">
@@ -22,27 +46,51 @@
     </div>
   </header>
 
+  <section class="player-section" aria-labelledby="player-heading">
+    <div class="section-heading">
+      <p class="eyebrow">СЦЕНА / ВОСПРОИЗВЕДЕНИЕ</p>
+      <h2 id="player-heading">Плеер</h2>
+    </div>
+    <MediaPlayer
+      src={resolve(`/songs/${data.song.id}/media`)}
+      mediaKind={data.song.mediaKind}
+      durationMs={data.song.durationMs}
+      oncurrenttimechange={handleCurrentTimeChange}
+    />
+  </section>
+
   <section class="song-content" aria-labelledby="lyrics-heading">
     <div>
-      <p class="eyebrow">primary lyric / {primaryLyric?.language ?? '—'}</p>
+      <p class="eyebrow">основной текст / {primaryLyric?.language ?? '—'}</p>
       <h2 id="lyrics-heading">Текст песни</h2>
     </div>
     {#if primaryLyric}
-      <pre>{primaryLyric.text}</pre>
+      <div>
+        <LyricLines text={primaryLyric.text} timings={primaryTimings} {currentTimeMs} />
+        {#if primaryTimings.length === 0}
+          <p class="timings-note">Тайминги пока не добавлены — текст доступен для чтения.</p>
+        {/if}
+      </div>
     {:else}
-      <p>Основной текст ещё не добавлен.</p>
+      <p class="lyrics-missing">Основной текст ещё не добавлен.</p>
     {/if}
   </section>
 
-  {#if data.song.lyrics.length > 1}
+  {#if secondaryLyrics.length > 0}
     <section class="secondary" aria-labelledby="secondary-heading">
-      <h2 id="secondary-heading">Дополнительные тексты</h2>
-      {#each data.song.lyrics.filter((lyric) => !lyric.isPrimary) as lyric (lyric.id)}
-        <details>
-          <summary>{lyric.language}</summary>
-          <pre>{lyric.text}</pre>
-        </details>
-      {/each}
+      <h2 id="secondary-heading">Дополнительный текст</h2>
+      <label class="secondary-picker">
+        <span>Выбрать язык</span>
+        <select value={selectedSecondaryId ?? ''} onchange={selectSecondary}>
+          <option value="">Не показывать</option>
+          {#each secondaryLyrics as lyric (lyric.id)}
+            <option value={lyric.id}>{lyric.language}</option>
+          {/each}
+        </select>
+      </label>
+      {#if selectedSecondary}
+        <LyricLines text={selectedSecondary.text} label="Дополнительный текст" />
+      {/if}
     </section>
   {/if}
 </main>
@@ -88,6 +136,7 @@
     flex-wrap: wrap;
     gap: 0.4rem;
   }
+  .player-section,
   .song-content {
     display: grid;
     grid-template-columns: minmax(12rem, 0.4fr) minmax(0, 1fr);
@@ -95,38 +144,49 @@
     padding: 1.5rem 0;
     border-top: 1px solid #1f2024;
   }
+  .section-heading {
+    align-self: start;
+  }
   h2 {
     margin: 0;
     font:
       700 2rem/1 Georgia,
       serif;
   }
-  pre {
-    margin: 0;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    font:
-      1.2rem/1.8 'Trebuchet MS',
-      sans-serif;
+  .timings-note,
+  .lyrics-missing {
+    margin: 1rem 0 0;
+    color: #64636a;
+    line-height: 1.5;
   }
   .secondary {
     margin-top: 3rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(31, 32, 36, 0.35);
   }
-  details {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #f8f4eb;
+  .secondary-picker {
+    display: grid;
+    max-width: 18rem;
+    gap: 0.35rem;
+    margin: 1rem 0 1.5rem;
+    color: #64636a;
+    font:
+      700 0.72rem/1 'Courier New',
+      monospace;
+    text-transform: uppercase;
   }
-  summary {
-    cursor: pointer;
-    font-weight: 700;
-  }
-  details pre {
-    margin-top: 1rem;
+  .secondary-picker select {
+    min-height: 2.75rem;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid #64636a;
+    background: #fffdf7;
+    color: #1f2024;
+    font:
+      1rem/1.2 'Trebuchet MS',
+      sans-serif;
   }
   @media (max-width: 650px) {
+    .player-section,
     .song-content {
       grid-template-columns: 1fr;
       gap: 1rem;

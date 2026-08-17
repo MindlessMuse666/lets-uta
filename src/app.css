@@ -1,20 +1,27 @@
 :root {
+  --paper: #eee9df;
+  --surface-strong: #f8f4eb;
+  --ink: #1f2024;
+  --muted: #64636a;
+  --cyan: #00e5ff;
+  --pink: #ff4081;
+  --yellow: #ffd543;
   font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
-  color: #1f2024;
-  background: #eee9df;
+  color: var(--ink);
+  background: var(--paper);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
 
 html {
   min-width: 320px;
-  background: #eee9df;
+  background: var(--paper);
 }
 
 body {
   min-width: 320px;
   margin: 0;
-  background: #eee9df;
+  background: var(--paper);
 }
 
 button,

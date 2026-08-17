@@ -14,6 +14,17 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser
+      },
+      globals: {
+        Event: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLMediaElement: 'readonly',
+        HTMLSelectElement: 'readonly',
+        HTMLTextAreaElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        window: 'readonly'
       }
     }
   }
