@@ -4,7 +4,7 @@
 
 ## 0. Назначение
 
-`Let's Moka!` (`lets-moka`) — изолированное локальное web-приложение для системных аналитиков. Оно объединяет медиафайл MP3/MP4/OGG, ASS-файл и значения формы в один эталонный JSON-мок, совместимый с контрактом данных `lets-uta`.
+`Let's Moka!` (`lets-moka`) — изолированное локальное web-приложение для системных аналитиков и тестировщиков. Оно объединяет медиафайл MP3/MP4/OGG, ASS-файл и значения формы в один эталонный JSON-мок, совместимый с контрактом данных `lets-uta`.
 
 Приложение входит в репозиторий `lets-uta` только для удобства разработки и запуска. Оно не импортирует код, SQLite, SvelteKit или server-модули основного приложения. В будущем каталог `lets-moka` можно перенести в отдельный репозиторий без изменения его публичного поведения.
 
@@ -222,21 +222,21 @@ JSON выводится в UTF-8 с `SetEscapeHTML(false)`, отступом в 
 
 ```text
 lets-moka/
-├── cmd/lets-moka/main.go
-├── internal/ass/
-├── internal/media/
-├── internal/mock/
-├── internal/web/
-├── web/
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-├── favicon.ico
-├── logo_lets_moka_v1.png
-├── go.mod
-├── go.sum
-├── TECH-TASK-LETS-MOKA.md
-└── README.md
+  cmd/lets-moka/main.go
+  internal/ass/
+  internal/media/
+  internal/mock/
+  internal/web/
+  web/
+    index.html
+    styles.css
+    app.js
+  favicon.ico
+  logo_lets_moka_v1.png
+  go.mod
+  go.sum
+  TECH-TASK-LETS-MOKA.md
+  README.md
 ```
 
 `internal/ass`, `internal/media` и `internal/mock` не знают о HTTP и HTML. `internal/web` переводит HTTP/form input в вызовы чистых пакетов. `web` не содержит бизнес-валидацию, только доступные affordances и отображение результата.
