@@ -1,6 +1,6 @@
 # AGENTS.md — инструкция для агента проекта
 
-**Версия: v1** (2026-08-17)
+**Версия: v2** (17 августа, 2026)
 
 Проект — локальный single-user медиаплеер с караоке-режимом для песен с вокалоидами. Единственный источник технической истины — `TECH-TASK.md` в корне репозитория. Перед началом любой задачи прочитай его полностью и используй только описанные в нём публичные контракты.
 
@@ -9,7 +9,7 @@
 - Реализовывать слайсы строго по порядку, один слайс за сессию.
 - Сначала проверять контракты текущего слайса, затем планировать файлы и acceptance-driven тесты.
 - Не выдумывать таблицы, колонки, типы, функции, маршруты, статусы, поля форм или UI-контракты.
-- Писать пользовательские тексты, ошибки валидации и сообщения интерфейса на русском языке.
+- Писать тексты для Юзера, ошибки валидации и сообщения интерфейса на русском языке.
 - Писать имена кода, TypeScript-типы, SQL-колонки, логи и сообщения исключений на английском языке.
 - Писать тесты по наблюдаемым критериям приёмки и негативным сценариям, а не по внутренней реализации.
 - Сохранять строгие границы `src/lib/karaoke/`, `src/lib/server/`, `src/lib/ui/` и `src/routes/`.
@@ -21,8 +21,10 @@
 ### Документы
 
 1. `TECH-TASK.md` — продуктовые, архитектурные, data, HTTP, UI, тестовые и acceptance-контракты.
-2. `.codex/skills/vocaloid-editorial-craft/SKILL.md` — рабочий процесс, Svelte 5 Runes, границы модулей и визуальные правила.
-3. `scripts/data/songs_dataset.json` — детерминированная dataset-фикстура для seed и сквозных моков.
+2. `.codex/skills/lets-uta-editorial-craft/SKILL.md` — рабочий процесс, Svelte 5 Runes, границы модулей и визуальные правила.
+3. `.codex/skills/lets-uta-readme-craft/SKILL.md` — скилл для генерации, обновления и ревью файла `README.md`.
+4. `scripts/data/songs_dataset.json` — детерминированная dataset-фикстура для seed и сквозных моков.
+5. `media/fixtures/MASA-WORKS-DESIGN/MASA WORKS DESIGN ft.LosstimeLife-ドンドルマ.json` — эталонная JSON-структура медиа для моков.
 
 Если правило не описано в этих документах, не добавляй его молча. Используй процедуру `CONTRACT GAP`.
 
@@ -43,7 +45,7 @@
 - SQL находится в `db.ts`, `migrations.ts` и специализированных server-модулях. Все значения передаются bind-параметрами.
 - `better-sqlite3` и `onnxruntime-node` импортируются только в server/worker-коде.
 - Абсолютные пути и технические stack traces не выдаются клиенту.
-- Пользовательские медиафайлы не обслуживаются через `static/`; путь из базы проходит проверку внутри data root.
+- Медиафайлы Юзера не обслуживаются через `static/`; путь из базы проходит проверку внутри data root.
 
 ## Порядок работы над слайсом
 
@@ -65,7 +67,7 @@
 
 - Unit: чистая валидация upload, `splitText`, `validateTimings`, `mapTokensToLines`, path safety, archive manifest и parsing settings.
 - Integration: миграции на `:memory:`, foreign keys, cascade delete, JSON-массивы, транзакционный upload, media cleanup, idempotent timings, сохранение старых timings при ошибке sync, job transitions, cancellation и archive rollback.
-- E2E: используй `scripts/data/songs_dataset.json`, deterministic media fixtures и mock alignment adapter; проверяй upload, библиотеку, player, active line, sync polling, ручные timings, редактирование, удаление, тему, импорт/экспорт, ошибки и keyboard-only сценарии.
+- E2E: используй `scripts/data/songs_dataset.json`, deterministic media fixtures и mock alignment adapter; проверяй upload с primary `ja`, библиотеку, player, active line, async add translation, shared timings, sync polling, ручные timings, редактирование, удаление, тему, auto-scroll delay, selection colors, импорт/экспорт, error boundary, ошибки и keyboard-only сценарии.
 - Property-based: проверяй инварианты нормализации строк, timing validation и round-trip сериализации допустимых доменных объектов.
 - Реальную ONNX-модель не запускай в обычном CI acceptance suite; отдельная проверка модели выполняется только через setup/integration check.
 
@@ -103,10 +105,16 @@ npm run gate
 - Cyan `#00E5FF`, pink `#FF4081` и yellow `#FFD543` применяй как дозированные семантические сигналы, а не как постоянное свечение.
 - Не добавляй generic glassmorphism, случайные gradients, декоративные blobs, постоянный neon glow или шаблонную AI-композицию.
 - Храни лицензированные шрифты в `static/fonts/`; не используй внешние CDN.
-- Сохраняй пользовательские переносы строк. Karaoke-подсветка должна быть построчной и дискретной; active line получает `aria-current="true"`.
+- Сохраняй переносы строк, введённые Юзером. Karaoke-подсветка должна быть построчной и дискретной; active line получает `aria-current="true"`.
 - При отсутствии timings показывай читаемый текст и доступное действие синхронизации/редактирования.
 - Каждый control имеет доступное имя, видимый `focus-visible`, keyboard behavior и состояние ошибки/loading для screen reader.
 - Не скрывай active lyric и основные controls на ширине 320 px; учитывай длинные заголовки, длинные строки, empty/error/loading states.
+- Primary lyric всегда `ja`; допускается не более одного secondary lyric `ru` или `en`.
+- Timing хранится одним набором для primary `ja` и используется переводом по тому же `lineIndex`; отдельные timings для перевода не создаются.
+- Перевод добавляется отдельным асинхронным `addTranslation` action и не блокирует media playback.
+- Автоскролл использует настраиваемый `autoScrollDelayMs` с default `3000`; любое взаимодействие Юзера сбрасывает таймер, а выделение и ручная прокрутка временно блокируют автоскролл.
+- Selection colors вне lyric-контейнеров циклически используют cyan `#00E5FF`, pink `#FF4081`, yellow `#FFD543`; внутри `ja`/`ru`/`en` используются только разрешённые цвета, не совпадающие с active line.
+- Error boundary оформляет `400`, `404` и `500` единым responsive arcade/editorial стилем и не раскрывает технические детали.
 
 ## Если контракта недостаточно
 

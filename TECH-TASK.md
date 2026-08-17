@@ -1,6 +1,6 @@
 # TECH-TASK — локальный караоке-медиаплеер для вокалоидов
 
-**Версия: v1** (17 августа 2026)
+**Версия: v2** (17 августа, 2026)
 
 ## 0. Как читать этот документ
 
@@ -11,7 +11,7 @@
 - Сначала закрываются критерии приёмки текущего слайса, затем выполняется полный гейт.
 - Контракты нельзя расширять догадками. Если для критерия не хватает поля, типа, функции или маршрута, работа останавливается с блоком `CONTRACT GAP` из раздела 15.
 - Любая миграция базы данных, изменение публичного типа или изменение HTTP-контракта требует обновления версии документа и отдельного согласования.
-- Тексты интерфейса, ошибки валидации и пользовательские сообщения пишутся на русском языке.
+- Тексты интерфейса, ошибки валидации и сообщения для Юзера пишутся на русском языке.
 - Имена кода, типы, SQL-колонки, логи и сообщения исключений пишутся на английском языке.
 
 Порядок работы над слайсом:
@@ -29,7 +29,7 @@
 
 ## 1. Продукт
 
-Приложение — локальный медиаплеер с караоке-режимом для песен с вокалоидами. Пользователь хранит библиотеку на своём компьютере, загружает аудио или видео, добавляет метаданные и тексты, запускает локальную синхронизацию и при необходимости вручную корректирует тайминги строк.
+Приложение — локальный медиаплеер с караоке-режимом для песен с вокалоидами. Юзер хранит библиотеку на своём компьютере, загружает аудио или видео, добавляет метаданные и тексты, запускает локальную синхронизацию и при необходимости вручную корректирует тайминги строк.
 
 Во время воспроизведения приложение показывает строки выбранного текста и дискретно выделяет строку, соответствующую текущему времени. Непрерывная заливка текста по мере исполнения не используется.
 
@@ -39,7 +39,7 @@
 
 - Быстрое локальное добавление песни в библиотеку.
 - Надёжное воспроизведение MP3, OGG и MP4.
-- Хранение пользовательских метаданных, основного текста и переводов.
+- Хранение метаданных Юзера, основного текста и переводов.
 - Построчная автоматическая синхронизация через локальный Forced Alignment.
 - Полная ручная правка таймингов после автоматической обработки.
 - Перенос библиотеки через экспорт и импорт архива.
@@ -48,7 +48,7 @@
 
 ### 1.2. Ограничения
 
-- Один локальный пользователь без аккаунтов и ролей.
+- Один локальный Юзер без аккаунтов и ролей.
 - Данные и медиафайлы находятся на локальном диске.
 - Приложение запускается Node.js-сервером и открывается в браузере.
 - После выполнения setup приложение должно работать без сети.
@@ -59,7 +59,7 @@
 
 ### 1.3. Не входит в MVP
 
-- Пользовательская авторизация.
+- Авторизация Юзера.
 - Облачная синхронизация.
 - Совместное редактирование.
 - Мобильное нативное приложение.
@@ -71,16 +71,17 @@
 
 ### 1.4. Основные сценарии
 
-1. Пользователь запускает setup, проверяет Node.js, FFmpeg и модели.
-2. Пользователь открывает библиотеку и видит песни, отсортированные от новых к старым.
-3. Пользователь загружает аудио или видео, название, метаданные и один или несколько текстов.
-4. Пользователь открывает песню, запускает воспроизведение и видит текущую строку.
-5. Пользователь запускает синхронизацию, наблюдает состояние и прогресс задачи.
-6. Пользователь получает новые тайминги только после полного успешного результата.
-7. Пользователь вручную исправляет отдельные строки и сохраняет результат.
-8. Пользователь редактирует метаданные или тексты.
-9. Пользователь удаляет песню вместе с медиафайлом и связанными данными.
-10. Пользователь экспортирует библиотеку в архив и импортирует архив на другой локальный экземпляр.
+1. Юзер запускает setup, проверяет Node.js, FFmpeg и модели.
+2. Юзер открывает библиотеку и видит песни, отсортированные от новых к старым.
+3. Юзер загружает аудио или видео, название, метаданные и тексты `ja` и, при необходимости, один перевод.
+4. Юзер открывает песню, запускает воспроизведение и видит текущую строку.
+5. Юзер запускает синхронизацию, наблюдает состояние и прогресс задачи.
+6. Юзер получает новые тайминги только после полного успешного результата.
+7. Юзер вручную исправляет отдельные строки и сохраняет результат.
+8. Юзер редактирует метаданные или тексты.
+9. Юзер добавляет перевод асинхронно, не прерывая воспроизведение.
+10. Юзер удаляет песню вместе с медиафайлом и связанными данными.
+11. Юзер экспортирует библиотеку в архив и импортирует архив на другой локальный экземпляр.
 
 ---
 
@@ -164,7 +165,7 @@ data/
 static/
   fonts/
   icons/
-src/
+  src/
   app.html
   app.css
   hooks.server.ts
@@ -207,6 +208,7 @@ src/
       ProgressBar.svelte
       Dialog.svelte
   routes/
+    +error.svelte
     +layout.svelte
     +layout.server.ts
     +page.svelte
@@ -299,9 +301,11 @@ tests/
 Ограничения:
 
 - Для одной песни существует ровно один primary lyric.
-- Для одной песни допускается не более одного текста на один язык.
-- Secondary lyric не может иметь тот же язык, что и primary lyric.
+- Primary lyric всегда имеет `language = 'ja'`.
+- Для одной песни допускается не более одного secondary lyric.
+- Secondary lyric может иметь только `language = 'ru'` или `language = 'en'`.
 - Перед сохранением текст нормализуется только по окончаниям строк; внутренние переносы сохраняются.
+- Количество строк secondary lyric обязано совпадать с количеством строк primary lyric.
 
 ### 4.4. Таблица `timings`
 
@@ -318,6 +322,8 @@ tests/
 Уникальный индекс: `(lyricId, lineIndex)`.
 
 `endTime` не может превышать `songs.durationMs`; это проверяется в service layer, потому что SQLite CHECK не может безопасно ссылаться на другую таблицу.
+
+Timing-записи существуют только для primary lyric (`ja`). Этот единственный набор является общим для primary lyric и secondary lyric: строки перевода сопоставляются с timing по одинаковому `lineIndex`, отдельные timing-записи для перевода не создаются.
 
 ### 4.5. Таблица `sync_jobs`
 
@@ -350,6 +356,7 @@ tests/
 - `theme`: `light` или `dark`, default `light`.
 - `volume`: число от `0` до `1`, default `0.8`.
 - `playbackStep`: положительное число секунд, default `5`.
+- `autoScrollDelayMs`: положительное целое число миллисекунд, default `3000`.
 
 ### 4.7. Таблица `schema_migrations`
 
@@ -362,6 +369,7 @@ tests/
 
 ```ts
 export type Language = 'ru' | 'ja' | 'en';
+export type SecondaryLanguage = 'ru' | 'en';
 export type MediaKind = 'audio' | 'video';
 export type TimingSource = 'auto' | 'manual' | 'import';
 export type Theme = 'light' | 'dark';
@@ -422,6 +430,7 @@ export type SyncJob = {
 
 export type SongWithDetails = Song & {
   lyrics: Lyric[];
+  /** The single primary-anchored timing set is shared with the translation. */
   timings: Timing[];
 };
 
@@ -429,11 +438,10 @@ export type UploadInput = {
   file: File;
   title: string;
   primaryLyric: string;
-  primaryLanguage: Language;
-  secondaryLyrics: Array<{
+  secondaryLyric?: {
     text: string;
-    language: Language;
-  }>;
+    language: SecondaryLanguage;
+  };
   meaning?: string;
   composers: string[];
   artists: string[];
@@ -488,6 +496,10 @@ export function deleteSong(id: number): void;
 export function getLyricsForSong(songId: number): Lyric[];
 export function getLyric(id: number): Lyric | undefined;
 export function createLyric(data: Omit<Lyric, 'id' | 'createdAt' | 'updatedAt'>): Lyric;
+export function addTranslation(
+  songId: number,
+  input: { language: SecondaryLanguage; text: string },
+): Lyric;
 export function updateLyric(
   id: number,
   data: Pick<Lyric, 'language' | 'isPrimary' | 'text'>,
@@ -495,7 +507,9 @@ export function updateLyric(
 export function deleteLyric(id: number): void;
 ```
 
-Изменение количества строк текста удаляет тайминги, относящиеся к старой структуре. Это действие выполняется в одной транзакции и явно сообщается пользователю.
+`addTranslation` разрешает только один secondary lyric и сохраняет его в таблице `lyrics`. Проверка совпадения количества строк с primary lyric выполняется до записи.
+
+Изменение количества строк primary lyric удаляет общий timing-набор, относящийся к старой структуре. Это действие выполняется в одной транзакции и явно сообщается Юзеру. Изменение количества строк перевода отклоняется и не меняет существующие данные.
 
 ### 5.4. `src/lib/server/timings.ts`
 
@@ -520,12 +534,14 @@ export function getSettings(): {
   theme: Theme;
   volume: number;
   playbackStep: number;
+  autoScrollDelayMs: number;
 };
 
 export function updateSettings(input: {
   theme?: Theme;
   volume?: number;
   playbackStep?: number;
+  autoScrollDelayMs?: number;
 }): void;
 ```
 
@@ -600,16 +616,46 @@ Legacy `export let`, `$:`, `<slot />`, `on:click` и `createEventDispatcher` з�
 - Карточки должны передавать различие между песнями через типографику, плотность и акцентную линию, а не через случайные декоративные изображения.
 - Шрифты должны поставляться локально в `static/fonts/`; CDN запрещён.
 - Рекомендуемая пара: выразительный display-шрифт для заголовков и читаемый humanist sans для текста; точные лицензированные файлы фиксируются в репозитории до реализации UI-слайса.
+- Интерактивные элементы используют arcade-направление: короткий физический отклик на нажатие, выразительный hover-сдвиг, контрастный `focus-visible`, ясные loading и disabled states.
+- Анимации строятся на ритме, смещении, штампе и смене акцентной линии; постоянное свечение, случайные градиенты и generic glassmorphism запрещены.
+- При `prefers-reduced-motion: reduce` arcade-эффект заменяется мгновенной сменой состояния без потери фокуса и контраста.
 
-### 6.4. Karaoke rendering
+### 6.4. Selection colors
+
+Выделение мышью вне контейнеров с текстами должно использовать не системный синий цвет. Цвета циклически меняются между cyan `#00E5FF`, pink `#FF4081` и yellow `#FFD543`. Для стабильности acceptance-тестов цикл начинается с cyan после загрузки страницы и меняется при новом выделении.
+
+Внутри lyric-контейнеров цвет выбирается из разрешённой пары и никогда не совпадает с цветом active line:
+
+| контейнер | active line | selection palette |
+| :--- | :--- | :--- |
+| `ja` | pink `#FF4081` | yellow `#FFD543`, cyan `#00E5FF` |
+| `ru` | cyan `#00E5FF` | yellow `#FFD543`, pink `#FF4081` |
+| `en` | yellow `#FFD543` | pink `#FF4081`, cyan `#00E5FF` |
+
+Selection использует акцентный фон и контрастный цвет текста. Тест проверяет принадлежность цвета разрешённой паре, а не конкретный случай псевдослучайного выбора.
+
+### 6.5. Karaoke rendering
 
 - Обычная строка имеет высокий контраст и комфортный межстрочный интервал.
 - Активная строка получает discrete class change, акцентный цвет, небольшой фон и визуальный маркер.
 - Запрещены continuous gradient fill, посимвольная заливка и обязательные fade-анимации.
 - При отсутствии таймингов текст остаётся полноценным читаемым текстом без неработающих placeholder-эффектов.
 - Активная строка должна быть доступна через `aria-current="true"`.
+- На странице песни сверху находится media player, ниже по центру — primary `ja` lyrics и небольшая доступная кнопка добавления перевода.
+- После добавления перевода `ja`-контейнер плавно сдвигается влево, а secondary-контейнер появляется справа; на узких экранах контейнеры переходят в вертикальный порядок.
+- Перевод отображается только после успешной проверки языка, лимита `8191` символа и совпадения количества строк.
+- Строка перевода использует тот же `lineIndex` и timing, что и текущая строка `ja`.
 
-### 6.5. Responsive и accessibility
+### 6.6. Playback auto-scroll
+
+- Автоскролл работает только во время воспроизведения и только при наличии timing-набора.
+- После `autoScrollDelayMs` бездействия Юзера активная строка плавно раскрывается в области чтения; default — `3000` мс.
+- Любое взаимодействие Юзера запускает таймер заново.
+- Выделение текста и ручная прокрутка временно блокируют автоскролл; после периода бездействия таймер запускается снова.
+- Для MP3/OGG прокручивается lyric-область. Для MP4 используется обычная прокрутка страницы, поэтому media player не перекрывает lyrics.
+- При reduced motion автоскролл выполняется без плавной анимации, а позиция чтения Юзера сохраняется настолько, насколько это возможно.
+
+### 6.7. Responsive и accessibility
 
 - Mobile-first layout.
 - Плеер и активная строка остаются доступными при ширине от 320 px.
@@ -618,6 +664,8 @@ Legacy `export let`, `$:`, `<slot />`, `on:click` и `createEventDispatcher` з�
 - Цвет не является единственным способом передачи статуса.
 - Обязательны labels, описания ошибок, правильные headings и live-region для прогресса синхронизации.
 - При `prefers-reduced-motion: reduce` отключаются декоративные движения и автоскролл с анимацией.
+- Диалог добавления перевода имеет обязательный select языка `ru`/`en`, textarea, счётчик символов, summary ошибок и не блокирует media playback во время async action.
+- Ошибка несовпадения строк показывается рядом с textarea и не закрывает диалог до исправления.
 
 ---
 
@@ -627,12 +675,12 @@ Legacy `export let`, `$:`, `<slot />`, `on:click` и `createEventDispatcher` з�
 | :--- | :--- | :--- |
 | `/` | библиотека, поиск и фильтры | GET |
 | `/upload` | загрузка медиа, метаданных и текстов | GET, POST action `create` |
-| `/songs/[id]` | плеер, тексты, тайминги и метаданные | GET, POST actions `updateSong`, `updateLyric`, `updateTimings`, `delete` |
+| `/songs/[id]` | плеер, тексты, тайминги и метаданные | GET, POST actions `updateSong`, `updateLyric`, `addTranslation`, `updateTimings`, `delete` |
 | `/songs/[id]/media` | защищённая отдача медиа с Range support | GET |
 | `/songs/[id]/sync` | создание задачи синхронизации | POST JSON |
 | `/songs/[id]/sync/[jobId]` | состояние и прогресс задачи | GET |
 | `/songs/[id]/sync/[jobId]/cancel` | запрос отмены | POST |
-| `/settings` | тема, громкость и hotkeys | GET, POST action `update` |
+| `/settings` | тема, громкость, hotkeys и auto-scroll delay | GET, POST action `update` |
 | `/library/export` | скачивание архива | GET |
 | `/library/import` | импорт архива | POST multipart |
 
@@ -643,6 +691,8 @@ Legacy `export let`, `$:`, `<slot />`, `on:click` и `createEventDispatcher` з�
 - Успешная загрузка перенаправляет на `/songs/[id]`.
 - Ошибки формы возвращаются через `fail(400, ...)` с безопасными сообщениями и сохранёнными текстовыми значениями.
 - Несуществующая песня возвращает `error(404, ...)`.
+- `addTranslation` возвращает асинхронный результат через enhanced form; media playback и текущая строка не блокируются на время запроса.
+- `addTranslation` принимает только один secondary language (`ru` или `en`) и сохраняет перевод только после полной валидации.
 - Запуск sync возвращает HTTP `202` и `{ jobId }`.
 - Ошибки бизнес-валидации возвращают JSON с HTTP `400`.
 - Необработанные внутренние ошибки не раскрывают пути файлов, stack trace или SQL.
@@ -670,6 +720,34 @@ type StartSyncResponse = { jobId: string };
 
 `POST /songs/[id]/sync/[jobId]/cancel` устанавливает `cancelRequested = 1`; worker завершает задачу на ближайшей безопасной точке.
 
+### 7.3. Translation action
+
+`POST` action `addTranslation` на `/songs/[id]` принимает поля формы:
+
+```ts
+type AddTranslationInput = {
+  language: unknown;
+  text: unknown;
+};
+
+type AddTranslationSuccess = {
+  ok: true;
+  lyric: Lyric;
+};
+```
+
+При успехе action возвращает `AddTranslationSuccess` через `use:enhance`; страница не выполняет полную навигацию и media playback не прерывается. При ошибке action возвращает `fail(400, ...)` с `fieldErrors` и сохранёнными `language`/`text`. Если secondary lyric уже существует, action не изменяет БД и возвращает `Перевод уже добавлен`.
+
+### 7.4. Error boundary
+
+`src/routes/+error.svelte` является единым error boundary для `400`, `404` и `500`. Все состояния используют доработанную arcade/editorial композицию с одинаковой иерархией заголовка, описания и безопасного действия возврата.
+
+- `400`: заголовок `Запрос не принят`, объяснение предлагает проверить введённые данные.
+- `404`: заголовок `Страница не найдена`, объяснение предлагает вернуться в библиотеку.
+- `500`: заголовок `Внутренняя ошибка`, объяснение не раскрывает технические детали и предлагает вернуться в библиотеку или повторить действие.
+- Ошибка не показывает absolute paths, stack trace, SQL или внутренние идентификаторы.
+- Страница доступна с клавиатуры, имеет видимый focus-visible, responsive layout от 320 px и reduced-motion состояние.
+
 ---
 
 ## 8. Валидация и безопасность
@@ -681,8 +759,7 @@ export function validateUploadInput(data: {
   title: unknown;
   file: File | undefined;
   primaryLyric: unknown;
-  primaryLanguage: unknown;
-  secondaryLyrics?: unknown;
+  secondaryLyric?: unknown;
   meaning?: unknown;
   composers?: unknown;
   artists?: unknown;
@@ -698,13 +775,25 @@ export function validateUploadInput(data: {
 - Разрешены расширения и MIME: MP3, OGG audio и MP4 video.
 - Расширение не является единственной проверкой: MIME и результат FFmpeg должны соответствовать.
 - `primaryLyric`: непустой текст до 8191 символа.
-- `primaryLanguage`: только `ru`, `ja`, `en`.
-- Каждая дополнительная запись содержит непустой текст и язык.
-- Язык дополнительного текста не совпадает с primary language и не повторяется.
+- Primary language не передаётся формой и всегда равен `ja`.
+- `secondaryLyric`, если передан, содержит непустой текст и ровно один язык `ru` или `en`.
+- Количество строк `secondaryLyric` должно совпадать с количеством строк `primaryLyric`, рассчитанным через `splitText`.
 - `meaning`: необязательный текст до 4000 символов.
 - `composers` и `artists`: массив или comma-separated input; trim, удаление пустых элементов, максимум 20 элементов, максимум 100 символов на элемент.
 
-Сообщения: `Название обязательно`, `Файл обязателен`, `Файл слишком большой (макс. 100 МБ)`, `Неверный формат файла`, `Основной текст обязателен`, `Текст слишком длинный`, `Неверно указан язык`, `Язык уже используется`, `Описание слишком длинное`, `Некорректное значение тайминга`.
+Сообщения: `Название обязательно`, `Файл обязателен`, `Файл слишком большой (макс. 100 МБ)`, `Неверный формат файла`, `Основной текст обязателен`, `Текст слишком длинный`, `Неверно указан язык`, `Перевод уже добавлен`, `Количество строк перевода должно совпадать с японским текстом`, `Описание слишком длинное`, `Некорректное значение тайминга`.
+
+```ts
+export function validateTranslationInput(data: {
+  text: unknown;
+  language: unknown;
+  primaryText: string;
+}):
+  | { ok: true; value: { text: string; language: SecondaryLanguage } }
+  | { ok: false; fieldErrors: Record<string, string> };
+```
+
+`validateTranslationInput` нормализует только окончания строк, сохраняет внутренние переносы, ограничивает текст `8191` символом и требует полного совпадения результата `splitText` с primary `ja`.
 
 ### 8.2. Timing validation
 
@@ -755,7 +844,6 @@ export function alignLyrics(
   audio: Float32Array,
   sampleRate: 16000,
   text: string,
-  language: Language,
 ): Promise<AlignmentToken[] | null>;
 
 export function mapTokensToLines(
@@ -778,7 +866,7 @@ export function splitText(text: string): string[];
 - убирает только пустые строки в начале и конце текста;
 - сохраняет внутренние пустые строки как строки без автоматического timing;
 - не объединяет строки по пунктуации;
-- возвращает строки в том же порядке, в каком их ввёл пользователь.
+- возвращает строки в том же порядке, в каком их ввёл Юзер.
 
 ### 9.3. Worker pipeline
 
@@ -788,12 +876,12 @@ export function splitText(text: string): string[];
 4. Проверить существование песни, primary lyric и media file.
 5. Проверить доступность модели и FFmpeg.
 6. Запустить FFmpeg с фиксированными аргументами для получения mono PCM 16 kHz.
-7. Передать PCM, язык и исходный primary text в `alignLyrics`.
+7. Передать PCM и исходный primary `ja` text в `alignLyrics`.
 8. Сопоставить токены со строками через `mapTokensToLines`.
 9. Проверить, что все непустые строки получили корректный диапазон.
 10. При отмене завершить job как `cancelled`, не меняя существующие timings.
 11. При ошибке завершить job как `failed`, сохранить старые timings и безопасное сообщение.
-12. При успехе в одной транзакции удалить старые timings primary lyric и вставить новый комплект с `source = 'auto'`.
+12. При успехе в одной транзакции удалить старые общие timings primary lyric и вставить новый комплект с `source = 'auto'`.
 13. Завершить job как `succeeded`.
 
 ### 9.4. Поведение при сбоях
@@ -863,6 +951,7 @@ type ArchiveManifest = {
 ### 11.1. Unit
 
 - upload validation: обязательные поля, лимиты, языки, списки авторов, форматы;
+- translation validation: только `ja` primary, один secondary `ru`/`en`, лимит `8191` и совпадение строк;
 - `splitText`: переносы строк, CRLF, пустые строки, Unicode;
 - `validateTimings`: границы, дубли, пересечения, длительность;
 - `mapTokensToLines`: корректные токены, пропуски, punctuation, пустые строки;
@@ -874,7 +963,7 @@ type ArchiveManifest = {
 
 - миграции на `:memory:`;
 - foreign keys и cascade delete;
-- уникальность primary lyric и языка;
+- один primary `ja`, один secondary `ru`/`en` и общий primary-anchored timing-набор;
 - JSON serialization arrays;
 - транзакционный upload rollback;
 - media cleanup;
@@ -893,6 +982,11 @@ type ArchiveManifest = {
 - воспроизведение test media;
 - смена active lyric;
 - изменение active line при seek;
+- открытие диалога добавления перевода без остановки media playback;
+- успешное асинхронное добавление перевода с построчным matching;
+- отклонение перевода с несовпадающим количеством строк и сохранение введённых значений;
+- автоскролл после configurable idle delay, reset после взаимодействия и pause после ручной прокрутки;
+- selection colors для внешнего текста и контейнеров `ja`/`ru`/`en`;
 - запуск sync и polling progress через mock alignment adapter;
 - ручное редактирование timing;
 - редактирование metadata;
@@ -900,6 +994,7 @@ type ArchiveManifest = {
 - смена темы и громкости;
 - экспорт и импорт архива;
 - ошибки формы и пустое состояние;
+- unified error boundary для `400`, `404` и `500`;
 - keyboard-only сценарии для плеера и редактора.
 
 Реальная ONNX-модель не запускается в обычном CI acceptance suite. Для неё предусмотрен отдельный setup/integration check с явным наличием модели.
@@ -994,7 +1089,7 @@ CONTRACT GAP
 
 - Стадия 1 — foundation: слайс 0.
 - Стадия 2 — library: слайсы 1–2.
-- Стадия 3 — playback: слайс 3.
+- Стадия 3 — playback: слайсы 3 и 3.1.
 - Стадия 4 — synchronization: слайс 4.
 - Стадия 5 — editing: слайсы 5–6.
 - Стадия 6 — portability and polish: слайсы 7–9.
@@ -1052,12 +1147,12 @@ CONTRACT GAP
 
 **Файлы:** songs/lyrics services, `/`, `/upload`, `/songs/[id]`, UI inputs/cards/badges, routes tests.
 
-**Поведение:** сохраняются meaning, composers, artists, primary lyric и дополнительные lyrics; библиотека поддерживает query, language и artist filters.
+**Поведение:** сохраняются meaning, composers, artists, primary `ja` lyric и не более одного secondary lyric `ru`/`en`; библиотека поддерживает query, language и artist filters.
 
 **Критерии приёмки:**
 
 1. Primary lyric обязателен.
-2. Дополнительные тексты сохраняются с уникальными языками.
+2. Primary lyric сохраняется как `ja`, а secondary lyric — не более одного с языком `ru` или `en`.
 3. Метаданные отображаются на странице песни.
 4. Библиотека сортируется по `createdAt DESC`.
 5. Поиск по title работает без учёта регистра.
@@ -1068,7 +1163,7 @@ CONTRACT GAP
 
 **Негативные сценарии:** duplicate language, empty title, too-long text, invalid JSON arrays, unknown song id.
 
-**Завершение:** пользователь может загрузить песню и найти её по библиотечным фильтрам.
+**Завершение:** Юзер может загрузить песню с `ja` и найти её по библиотечным фильтрам.
 
 ### Слайс 3 — media player и karaoke view
 
@@ -1085,7 +1180,7 @@ CONTRACT GAP
 3. При отсутствии timings текст остаётся читаемым.
 4. Выбранный secondary lyric отображается без подмены primary.
 5. Active line имеет discrete visual state и `aria-current`.
-6. Space, arrows и `k` работают согласно описанным hotkeys.
+6. Space, arrows и `k` работают согласно описанным hotkeys (и на `ru`, и на `en` раскладке клавиотуры).
 7. Range media request поддерживается.
 
 **Тесты:** component tests for active index, media endpoint integration, Playwright seek and keyboard tests.
@@ -1093,6 +1188,33 @@ CONTRACT GAP
 **Негативные сценарии:** missing media, invalid range, no lyrics, no timings.
 
 **Завершение:** seeded song проигрывается в браузере и корректно подсвечивает строки.
+
+### Слайс 3.1 — BF-01: immersive playback и translation
+
+**Цель:** добавить основной playback-сценарий вокалоидного плеера с обязательным `ja`, одним сохранённым переводом и ненавязчивым следованием за активной строкой.
+
+**Файлы:** upload validation и lyrics service, `/songs/[id]`, `Dialog.svelte`, `Select.svelte`, `TextArea.svelte`, `LyricLines.svelte`, `MediaPlayer.svelte`, settings service, `app.css`, route и interaction tests.
+
+**Поведение:** upload принимает primary `ja` и не более одного secondary `ru`/`en`; страница песни показывает player сверху, `ja` lyrics по центру и optional add-translation control; отдельный async action сохраняет перевод без остановки воспроизведения; перевод использует общий timing-набор; active line и selection colors различаются по языку; автоскролл запускается после `autoScrollDelayMs` бездействия и сбрасывается взаимодействием Юзера.
+
+**Критерии приёмки:**
+
+1. Upload больше не принимает `primaryLanguage` и сохраняет primary lyric только как `ja`.
+2. Для песни сохраняется не более одного secondary lyric с языком `ru` или `en`.
+3. Диалог добавления перевода требует язык и текст, ограничивает текст `8191` символом и отклоняет несовпадение количества строк.
+4. Успешный `addTranslation` сохраняет перевод асинхронно; media playback, active line и controls остаются доступными.
+5. После успеха `ja` сдвигается влево, translation появляется справа, а обе колонки используют один `lineIndex` и timing.
+6. `ja` active line имеет pink, `ru` — cyan, `en` — yellow; selection palette каждой колонки не пересекается с active line.
+7. Внешнее выделение текста циклически использует cyan, pink и yellow вместо системного синего.
+8. Во время playback после configurable idle delay активная строка раскрывается автоскроллом; click, keyboard, selection и ручная прокрутка корректно сбрасывают или приостанавливают таймер.
+9. MP4 использует обычную прокрутку страницы и не перекрывает lyrics.
+10. На 320 px, tablet и desktop player, active line, add-translation control и ошибки остаются доступными.
+
+**Тесты:** validation unit, translation action integration, shared timing mapping, component tests for palette and idle state, Playwright tests for async add, keyboard dialog, MP3/MP4 scrolling and reduced motion.
+
+**Негативные сценарии:** второй перевод, язык `ja`, неверный язык, пустой или слишком длинный перевод, несовпадение строк, action failure, playback error, missing timings, manual scroll, text selection и narrow viewport.
+
+**Завершение:** Юзер может слушать или смотреть вокалоидный media, читать `ja`, асинхронно добавить валидный перевод и не потерять контроль над воспроизведением.
 
 ### Слайс 4 — async Forced Alignment
 
@@ -1125,7 +1247,7 @@ CONTRACT GAP
 
 **Файлы:** `TimelineEditor.svelte`, timing validation, song action, timing tests.
 
-**Поведение:** пользователь видит строку, start/end в миллисекундах и source; invalid values блокируют сохранение.
+**Поведение:** Юзер видит строку, start/end в миллисекундах и source; invalid values блокируют сохранение.
 
 **Критерии приёмки:**
 
@@ -1144,11 +1266,11 @@ CONTRACT GAP
 
 ### Слайс 6 — editing и settings
 
-**Цель:** редактировать данные песни и сохранять пользовательские настройки.
+**Цель:** редактировать данные песни и сохранять настройки Юзера.
 
 **Файлы:** song/lyric actions, settings route, settings service, dialogs, tests.
 
-**Поведение:** пользователь меняет title, meaning, tags, lyrics, theme, volume и playback step; изменение структуры текста предупреждает о сбросе timings.
+**Поведение:** Юзер меняет title, meaning, tags, lyrics, theme, volume, playback step и auto-scroll delay; изменение структуры primary текста предупреждает о сбросе общего timing-набора, а перевод нельзя сохранить при несовпадении строк.
 
 **Критерии приёмки:**
 
@@ -1157,7 +1279,8 @@ CONTRACT GAP
 3. Изменение строк явно подтверждает удаление устаревших timings.
 4. Theme persists in SQLite.
 5. Volume applies to every player after reload.
-6. Delete requires confirmation and removes database records plus owned media.
+6. Auto-scroll delay persists in SQLite and applies after reload.
+7. Delete requires confirmation and removes database records plus owned media.
 
 **Тесты:** action integration, cascade delete, settings persistence and Playwright reload tests.
 
@@ -1194,7 +1317,7 @@ CONTRACT GAP
 
 **Файлы:** `app.css`, UI components, local fonts, layout, accessibility tests.
 
-**Поведение:** light/dark themes, responsive grid, focus states, reduced-motion, readable active lyrics, intentional page composition.
+**Поведение:** light/dark themes, responsive grid, arcade interaction states, non-default selection colors, focus states, reduced-motion, readable active lyrics, intentional page composition.
 
 **Критерии приёмки:**
 
@@ -1203,7 +1326,8 @@ CONTRACT GAP
 3. Ошибки и progress доступны screen reader.
 4. Контраст текста и active state соответствует WCAG AA для обычного текста.
 5. Reduced-motion отключает декоративные движения.
-6. Визуальная система не использует CDN и случайные декоративные элементы.
+6. Selection outside lyrics cycles through cyan, pink and yellow; lyric containers use only their approved non-active colors.
+7. Визуальная система не использует CDN и случайные декоративные элементы.
 
 **Тесты:** Playwright accessibility smoke, keyboard navigation, reduced-motion screenshot checks and manual visual checklist.
 
@@ -1217,14 +1341,14 @@ CONTRACT GAP
 
 **Файлы:** setup, build config, logging/error pages, documentation comments, final tests.
 
-**Поведение:** production build запускается, data directory configurable, stale jobs recover safely, logs do not expose sensitive paths.
+**Поведение:** production build запускается, data directory configurable, stale jobs recover safely, unified `400`/`404`/`500` error boundary uses the project style, logs do not expose sensitive paths.
 
 **Критерии приёмки:**
 
 1. `npm run build` и `npm run preview` работают.
 2. Настройка `KARAOKE_DATA_DIR` меняет location данных.
 3. Незавершённые jobs после restart становятся `failed` с безопасным сообщением.
-4. Ошибки 404/500 имеют понятный UI.
+4. Ошибки 400, 404 и 500 имеют единый понятный UI с безопасными сообщениями.
 5. Полный `npm run gate` остаётся зелёным.
 
 **Тесты:** production smoke, env path integration, stale job recovery and final e2e suite.
