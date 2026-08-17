@@ -33,3 +33,13 @@ uploads/*
 .DS_Store
 Thumbs.db
 *.log
+deploy-error.*
+
+# VENV
+.venv/
+
+# PYTHON
+__pycache__/
+
+# IDE
+.vscode/
