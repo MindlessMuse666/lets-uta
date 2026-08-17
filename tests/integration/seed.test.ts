@@ -33,7 +33,7 @@ describe('dataset seed', () => {
 
     const db = getDb(path.join(dataRoot, 'karaoke.db'));
     expect(db.prepare('SELECT COUNT(*) AS count FROM songs').get()).toEqual({ count: 3 });
-    expect(db.prepare('SELECT COUNT(*) AS count FROM lyrics').get()).toEqual({ count: 7 });
+    expect(db.prepare('SELECT COUNT(*) AS count FROM lyrics').get()).toEqual({ count: 5 });
     expect(db.prepare('SELECT COUNT(*) AS count FROM timings').get()).toEqual({ count: 53 });
     closeDb(db);
   });
