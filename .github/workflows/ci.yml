@@ -34,7 +34,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Generate SvelteKit TypeScript config
-        run: npm run prepare 
+        run: npm run prepare
 
       - name: Run quality gate
         run: npm run gate

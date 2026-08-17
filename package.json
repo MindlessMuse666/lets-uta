@@ -2,8 +2,8 @@
   "name": "lets-uta",
   "private": true,
   "type": "module",
-  "prepare": "svelte-kit sync",
   "scripts": {
+    "prepare": "svelte-kit sync",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
