@@ -316,15 +316,15 @@ Checkbox `NULL` у `meaning` временно отключает поле без
 - ffprobe failure не показывает stderr и не оставляет temporary files.
 - `GET /healthz` не требует загрузки и отвечает только локальным health payload.
 
-### Browser acceptance
+### Проверка в браузере
 
-- File selection fills metadata while keeping fields editable.
-- `NULL` toggling preserves visible meaning, disables/re-enables textarea and changes only serialized value.
-- Japanese/translation labels are visible as `日本語`, `Русский`, `English`.
-- Long text with multiple paragraphs survives preview and download.
-- Copy feedback is announced, download filename follows edited title.
-- Keyboard-only flow reaches file controls, textareas, NULL checkbox, generate, copy and download.
-- At 320px no essential control or active error is hidden; reduced motion removes authored movement.
+- Выбор файлов заполняет метаданные, а поля остаются доступными для редактирования.
+- Переключение `NULL` сохраняет видимое значение, отключает и снова включает textarea и изменяет только сериализованное значение.
+- Названия японского текста и перевода отображаются как `日本語`, `Русский`, `English`.
+- Длинный текст с несколькими абзацами сохраняется в preview и скачанном файле.
+- Уведомление о копировании объявляется ассистивной технологией, а имя скачиваемого файла следует отредактированному названию.
+- Сценарий только с клавиатурой позволяет дойти до файловых полей, textarea, checkbox `NULL`, сборки, копирования и скачивания.
+- На ширине 320px основные controls и активная ошибка не скрываются; reduced motion отключает авторские перемещения.
 
 ## 14. Definition of Done
 
