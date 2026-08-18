@@ -15,6 +15,7 @@ import (
 type Metadata struct {
 	DurationMs int64
 	MediaKind  string
+	FormatName string
 	Title      string
 	Artists    []string
 	Composers  []string
@@ -23,8 +24,9 @@ type Metadata struct {
 
 type probeOutput struct {
 	Format struct {
-		Duration string            `json:"duration"`
-		Tags     map[string]string `json:"tags"`
+		Duration   string            `json:"duration"`
+		FormatName string            `json:"format_name"`
+		Tags       map[string]string `json:"tags"`
 	} `json:"format"`
 	Streams []struct {
 		Tags map[string]string `json:"tags"`
@@ -68,12 +70,30 @@ func ParseProbeJSON(data []byte, extension string) (Metadata, error) {
 	metadata := Metadata{
 		DurationMs: durationMs,
 		MediaKind:  KindForExtension(extension),
+		FormatName: strings.ToLower(strings.TrimSpace(probe.Format.FormatName)),
 		Title:      firstTag(tags, "title", "track", "name"),
 		Artists:    splitList(firstTag(tags, "artist", "album_artist", "performer")),
 		Composers:  splitList(firstTag(tags, "composer", "composer_name", "writer")),
 		Meaning:    firstTag(tags, "comment", "description"),
 	}
 	return metadata, nil
+}
+
+func IsCompatibleFormat(extension string, formatName string) bool {
+	if strings.TrimSpace(formatName) == "" {
+		return true
+	}
+	formatName = strings.ToLower(formatName)
+	switch strings.ToLower(extension) {
+	case ".mp3":
+		return strings.Contains(formatName, "mp3")
+	case ".ogg":
+		return strings.Contains(formatName, "ogg")
+	case ".mp4":
+		return strings.Contains(formatName, "mp4") || strings.Contains(formatName, "mov")
+	default:
+		return false
+	}
 }
 
 func KindForExtension(extension string) string {

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Let's Moka!</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">ЛОКАЛЬНАЯ МАСТЕРСКАЯ / 01</p>
+          <h1>Let's <em>Moka!</em></h1>
+          <p class="intro">Соберите проверяемый JSON-мок из медиа и субтитров без отправки файлов наружу.</p>
+        </div>
+        <div class="stamp" aria-label="Работает локально">
+          <span class="stamp-dot"></span>
+          <span>ТОЛЬКО ЛОКАЛЬНО<br />БЕЗ ЗАГРУЗКИ</span>
+        </div>
+      </header>
+
+      {{if .Error}}
+        <section class="error-block" role="alert" aria-labelledby="error-title">
+          <p class="eyebrow">ОШИБКА / {{.StatusCode}}</p>
+          <h2 id="error-title">Не получилось собрать мок</h2>
+          <p>{{.Error}}</p>
+        </section>
+      {{end}}
+
+      {{if .HasResult}}
+        <section class="result-layout" aria-labelledby="result-title">
+          <div class="result-heading">
+            <p class="eyebrow">РЕЗУЛЬТАТ / ГОТОВО</p>
+            <h2 id="result-title">JSON-мок собран</h2>
+            <p>Проверьте результат, затем скопируйте его или скачайте UTF-8 файл.</p>
+          </div>
+          <div class="result-actions" aria-label="Действия с JSON">
+            <button class="button button-primary" type="button" data-copy>Скопировать JSON</button>
+            <button class="button button-secondary" type="button" data-download data-download-name="{{.DownloadName}}">Скачать JSON</button>
+            <p class="status" data-status role="status" aria-live="polite"></p>
+          </div>
+          <pre class="json-preview" data-result-json tabindex="0">{{.Result}}</pre>
+          <a class="back-link" href="/">← Собрать ещё один мок</a>
+        </section>
+      {{else}}
+        <form class="workbench" method="post" action="/generate" enctype="multipart/form-data">
+          <section class="panel panel-source" aria-labelledby="source-title">
+            <div class="panel-heading">
+              <p class="eyebrow">01 / ИСТОЧНИК</p>
+              <h2 id="source-title">Материалы</h2>
+              <p>Выберите медиа и ASS-файл. Длительность и строки будут проверены локальным FFmpeg.</p>
+            </div>
+
+            <label class="file-card" for="media-file">
+              <span class="field-label">Медиафайл <strong>*</strong></span>
+              <span class="file-hint">MP3, MP4 или OGG · до 100 MiB</span>
+              <span class="file-name" data-file-name="media">{{if .MediaFilename}}{{.MediaFilename}}{{else}}Файл не выбран{{end}}</span>
+              <input id="media-file" name="media" type="file" accept=".mp3,.mp4,.ogg,audio/mpeg,audio/ogg,video/mp4" required />
+            </label>
+
+            <label class="file-card file-card-alt" for="ass-file">
+              <span class="field-label">ASS-субтитры <strong>*</strong></span>
+              <span class="file-hint">UTF-8 · переносы и тайминги сохраняются</span>
+              <span class="file-name" data-file-name="ass">{{if .ASSFilename}}{{.ASSFilename}}{{else}}Файл не выбран{{end}}</span>
+              <input id="ass-file" name="ass" type="file" accept=".ass,text/plain" required />
+            </label>
+            <p class="sr-only" data-status role="status" aria-live="polite"></p>
+          </section>
+
+          <section class="panel panel-details" aria-labelledby="details-title">
+            <div class="panel-heading">
+              <p class="eyebrow">02 / ПОЛЯ</p>
+              <h2 id="details-title">Поля мока</h2>
+              <p>Автозаполненные значения остаются редактируемыми перед сборкой.</p>
+            </div>
+
+            <div class="field-grid">
+              <label class="field field-wide">
+                <span class="field-label">Название мока <strong>*</strong></span>
+                <input name="title" type="text" value="{{.Title}}" autocomplete="off" required />
+              </label>
+              <label class="field field-wide">
+                <span class="field-label">Путь к медиафайлу <strong>*</strong></span>
+                <input name="filePath" type="text" value="{{.FilePath}}" spellcheck="false" required />
+                <span class="field-hint">Относительный путь вида media/fixtures/Artist/song.mp3</span>
+              </label>
+              <label class="field">
+                <span class="field-label">Тип медиа <strong>*</strong></span>
+                <select name="mediaKind" required>
+                  <option value="" disabled {{if not .MediaKind}}selected{{end}}>Определится по файлу</option>
+                  <option value="audio" {{if eq .MediaKind "audio"}}selected{{end}}>Аудио</option>
+                  <option value="video" {{if eq .MediaKind "video"}}selected{{end}}>Видео</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">Длительность, мс <strong>*</strong></span>
+                <input name="durationMs" type="number" min="1" step="1" value="{{.DurationMs}}" required />
+              </label>
+              <label class="field field-wide">
+                <span class="field-label">Исполнители <strong>*</strong></span>
+                <textarea name="artists" rows="2" required placeholder="Например: LosstimeLife, guest">{{.Artists}}</textarea>
+                <span class="field-hint">Список через запятую</span>
+              </label>
+              <label class="field field-wide">
+                <span class="field-label">Композиторы <strong>*</strong></span>
+                <textarea name="composers" rows="2" required placeholder="Например: MASA WORKS DESIGN">{{.Composers}}</textarea>
+                <span class="field-hint">Список через запятую</span>
+              </label>
+              <div class="field field-wide meaning-field">
+                <label class="field-label" for="meaning">Смысл или описание</label>
+                <textarea id="meaning" name="meaning" rows="4" {{if .MeaningNull}}readonly{{end}} placeholder="Можно оставить несколько абзацев">{{.Meaning}}</textarea>
+                <label class="check-row" for="meaning-null">
+                  <input id="meaning-null" name="meaningNull" type="checkbox" value="true" {{if .MeaningNull}}checked{{end}} />
+                  <span>NULL — сохранить значение визуально, записать в JSON как null</span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel panel-lyrics" aria-labelledby="lyrics-title">
+            <div class="panel-heading">
+              <p class="eyebrow">03 / ТЕКСТ</p>
+              <h2 id="lyrics-title">Текст и перевод</h2>
+              <p>Первичный текст получает тайминги из ASS. Перевод использует те же строки без дубликата таймингов.</p>
+            </div>
+            <label class="field field-wide lyric-field">
+              <span class="field-label">Основной текст · 日本語 <strong>*</strong></span>
+              <textarea name="primaryText" rows="10" required placeholder="Каждая строка должна оставаться на своём месте">{{.PrimaryText}}</textarea>
+              <span class="field-hint">Переносы строк сохраняются</span>
+            </label>
+            <div class="translation-grid">
+              <label class="field">
+                <span class="field-label">Язык перевода</span>
+                <select name="secondaryLanguage">
+                  <option value="">Не добавлять</option>
+                  <option value="ru" {{if eq .SecondaryLanguage "ru"}}selected{{end}}>Русский</option>
+                  <option value="en" {{if eq .SecondaryLanguage "en"}}selected{{end}}>English</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">Перевод</span>
+                <textarea name="secondaryText" rows="5" placeholder="Столько же строк, сколько в 日本語">{{.SecondaryText}}</textarea>
+              </label>
+            </div>
+          </section>
+
+          <div class="submit-row">
+            <p><strong>*</strong> Обязательные поля. Данные остаются на этом компьютере.</p>
+            <button class="button button-primary button-submit" type="submit">Собрать JSON-мок <span aria-hidden="true">↗</span></button>
+          </div>
+        </form>
+      {{end}}
+    </main>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>
