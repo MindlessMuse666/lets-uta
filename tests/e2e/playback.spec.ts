@@ -13,7 +13,7 @@ const fixtureMediaPath =
 async function waitForMedia(page: Page): Promise<void> {
   await page.waitForFunction(() => {
     const media = document.querySelector('audio, video');
-    return media instanceof HTMLMediaElement && media.readyState >= 1;
+    return media instanceof HTMLMediaElement && media.readyState >= 1 && media.volume === 0.8;
   });
 }
 

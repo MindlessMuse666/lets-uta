@@ -36,6 +36,10 @@
     updateCurrentTime(event.currentTarget as HTMLMediaElement);
   }
 
+  function handleSeeked(event: Event): void {
+    updateCurrentTime(event.currentTarget as HTMLMediaElement);
+  }
+
   async function togglePlayback(): Promise<void> {
     if (!mediaElement) return;
     errorMessage = null;
@@ -124,6 +128,7 @@
         preload="metadata"
         aria-label="Видео песни"
         ontimeupdate={handleTimeUpdate}
+        onseeked={handleSeeked}
         onplay={handlePlay}
         onpause={handlePause}
         onended={handleEnded}
@@ -139,6 +144,7 @@
         preload="metadata"
         aria-label="Аудио песни"
         ontimeupdate={handleTimeUpdate}
+        onseeked={handleSeeked}
         onplay={handlePlay}
         onpause={handlePause}
         onended={handleEnded}
