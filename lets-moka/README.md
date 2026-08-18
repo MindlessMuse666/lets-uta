@@ -97,3 +97,11 @@ web/                  HTML, CSS и vanilla JavaScript
 Проект распространяется по лицензии [GNU General Public License v3.0](../LICENSE).
 
 Автор: [MindlessMuse666](https://github.com/MindlessMuse666).
+
+<div align="center">
+  <img src="logo_lets_moka_v1.png" alt="Логотип Let's Moka!" width="100" height="100" />
+  <br>
+  <sub><b>Let's Moka! // Генератор JSON-моков</b></sub>
+  <br>
+  <sup><i>made with ❤️ by <a href="https://github.com/MindlessMuse666" target="_blank">MindlessMuse666</a></i></sup>
+</div>
