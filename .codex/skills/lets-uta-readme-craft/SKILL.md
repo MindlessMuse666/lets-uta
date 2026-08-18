@@ -5,7 +5,7 @@ description: Create human-crafted, non-AI-slop, clean and professional README.md
 
 # Lets Uta README Craft
 
-**Version: v2 (17 августа, 2026)**
+**Version: v2.1 (18 августа, 2026)**
 
 Use this skill to generate, update, or review the `README.md` file for the **Lets Uta!** - Vocaloid local karaoke media player project.
 
@@ -20,6 +20,10 @@ Use this skill to generate, update, or review the `README.md` file for the **Let
 5. **Accurate Metadata**:
    - **Author**: [@MindlessMuse666](https://github.com/MindlessMuse666)
    - **License**: `GNU General Public License v3.0` (`GPL-3.0`)
+6. **Required README landmarks**:
+   - Put `logo_lets_uta_v1.png` in the top centered brand block, with a useful Russian `alt` text.
+   - Explain the first-run startup order, prerequisites, expected local URL, and the purpose of each setup command.
+   - End the README with a compact footer containing the logo, project name, and author credit link.
 
 ---
 
@@ -27,6 +31,8 @@ Use this skill to generate, update, or review the `README.md` file for the **Let
 
 ````markdown
 <div align="center">
+
+<img src="logo_lets_uta_v1.png" alt="Логотип Lets Uta" width="112" height="112" />
 
 # 🎤 Lets Uta!
 
@@ -86,6 +92,8 @@ Use this skill to generate, update, or review the `README.md` file for the **Let
 
 ## 🚀 Быстрый старт
 
+The startup section must be a runnable sequence, not an unexplained command list. State that `npm run setup` is the first project command because it checks Node.js and FFmpeg and creates local directories; state that `npm run seed` is optional demo data; then show the development URL and a separate production preview flow.
+
 ### Системные требования
 
 - **Node.js** `22.0.0` или выше
@@ -125,6 +133,8 @@ npm run preview
 
 ## 🧪 Скрипты, тестирование и контроль качества
 
+Describe every listed npm script in Russian. Keep the command table only as a compact reference after the explanatory startup sequence; do not present a bare block of commands without context.
+
 Перед каждым коммитом и релизом запускается полный гейт проверок:
 
 ```bash
@@ -162,3 +172,11 @@ npm run gate
 ## 📄 Лицензия
 
 Этот проект распространяется под лицензией **GNU General Public License v3.0 (GPL-3.0)**. Подробности см. в файле [LICENSE](LICENSE).
+
+<div align="center">
+  <img src="logo_lets_uta_v1.png" alt="Логотип Lets Uta" width="88" height="88" />
+  <br>
+  <sub><b>Lets Uta // Локальное караоке для вокалоидов</b></sub>
+  <br>
+  <sup><i>made with ❤️ by <a href="https://github.com/MindlessMuse666">MindlessMuse666</a></i></sup>
+</div>
