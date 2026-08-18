@@ -151,10 +151,12 @@ h2 {
   background: var(--paper-deep);
 }
 .panel-source {
-  grid-row: span 2;
+  grid-column: 1;
+  grid-row: 1;
 }
 .panel-lyrics {
-  grid-column: 2;
+  grid-column: 1 / -1;
+  grid-row: 2;
 }
 .panel-heading {
   margin-bottom: 26px;
@@ -179,7 +181,8 @@ h2 {
 }
 
 .file-card:hover,
-.file-card:focus-within {
+.file-card:focus-within,
+.file-card.is-dragover {
   border-color: var(--pink);
   background: #f8f3e9;
 }
@@ -238,7 +241,9 @@ h2 {
 }
 .field input,
 .field select,
-.field textarea {
+.field textarea,
+.lyric-column select,
+.lyric-column textarea {
   width: 100%;
   border: 2px solid var(--ink);
   padding: 12px 13px;
@@ -247,7 +252,8 @@ h2 {
 }
 .field textarea {
   min-height: 78px;
-  resize: vertical;
+  resize: none;
+  overflow: hidden;
   line-height: 1.45;
 }
 .field-wide textarea {
@@ -256,6 +262,8 @@ h2 {
 .field input:focus-visible,
 .field select:focus-visible,
 .field textarea:focus-visible,
+.lyric-column select:focus-visible,
+.lyric-column textarea:focus-visible,
 .button:focus-visible,
 .back-link:focus-visible {
   outline: 3px solid var(--cyan);
@@ -272,7 +280,7 @@ h2 {
 }
 .check-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 9px;
   margin-top: 12px;
   color: var(--muted);
@@ -286,14 +294,51 @@ h2 {
   accent-color: var(--pink);
 }
 
-.translation-grid {
+.lyrics-editor {
   display: grid;
-  grid-template-columns: minmax(145px, 0.4fr) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.lyric-column {
+  display: block;
+  min-width: 0;
+  padding: 16px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+.lyric-column textarea {
+  min-height: 220px;
+  resize: none;
+  overflow: hidden;
+  line-height: 1.45;
+}
+.lyric-column.is-disabled {
+  opacity: 0.7;
+}
+.secondary-label {
   margin-top: 22px;
 }
-.lyric-field textarea {
-  min-height: 220px;
+.lyrics-editor.is-mismatch .lyric-column {
+  border-color: var(--pink);
+}
+.lyrics-editor.is-match .lyric-column {
+  border-color: var(--yellow);
+}
+.lyrics-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-family: Consolas, 'Liberation Mono', monospace;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+.lyrics-editor.is-mismatch + .lyrics-status {
+  color: var(--pink);
+}
+.lyrics-editor.is-match + .lyrics-status {
+  color: var(--ink);
 }
 .submit-row {
   grid-column: 1 / -1;
@@ -338,6 +383,7 @@ h2 {
 }
 .button-submit {
   min-width: 230px;
+  color: #1f2024;
 }
 
 .error-block {
@@ -427,7 +473,8 @@ h2 {
     background: var(--paper);
   }
   .file-card:hover,
-  .file-card:focus-within {
+  .file-card:focus-within,
+  .file-card.is-dragover {
     background: #3a3b42;
   }
   .error-block {
@@ -499,7 +546,7 @@ h2 {
     font-size: clamp(3.2rem, 19vw, 5rem);
   }
   .field-grid,
-  .translation-grid {
+  .lyrics-editor {
     display: block;
   }
   .field {
@@ -507,6 +554,15 @@ h2 {
   }
   .field:first-child {
     margin-top: 0;
+  }
+  .lyric-column + .lyric-column {
+    margin-top: 18px;
+  }
+  .lyrics-status {
+    display: block;
+  }
+  .lyrics-status span {
+    display: block;
   }
   .file-card {
     min-height: 132px;

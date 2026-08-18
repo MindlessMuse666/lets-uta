@@ -118,3 +118,10 @@ func TestBuildFilePathReplacesOnlySubdirectorySpaces(t *testing.T) {
 		t.Fatalf("got %q", got)
 	}
 }
+
+func TestBuildFilePathNormalizesArtistSeparators(t *testing.T) {
+	got := BuildFilePath("MASA WORKS DESIGN, 初音ミク", "HEAVEN.mp3")
+	if got != "media/fixtures/MASA-WORKS-DESIGN-初音ミク/HEAVEN.mp3" {
+		t.Fatalf("got %q", got)
+	}
+}

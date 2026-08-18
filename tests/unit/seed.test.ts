@@ -12,8 +12,11 @@ describe('seed dataset parser', () => {
     );
     const songs = parseSongsDataset(raw);
 
-    expect(songs).toHaveLength(3);
+    expect(songs).toHaveLength(4);
     expect(songs[0].lyrics.find((lyric) => lyric.isPrimary)?.language).toBe('ja');
+    const heaven = songs.find((song) => song.title === 'HEAVEN');
+    expect(heaven?.filePath).toContain('MASA-WORKS-DESIGN');
+    expect(heaven?.lyrics.find((lyric) => lyric.isPrimary)?.timings).toHaveLength(24);
   });
 
   it('rejects malformed dataset input', () => {

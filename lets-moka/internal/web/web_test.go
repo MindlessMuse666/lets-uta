@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"lets-moka/internal/media"
 )
 
 const probeJSON = `{"format":{"duration":"5.0","format_name":"mp3","tags":{"TITLE":"Probe title","ARTIST":"LosstimeLife; guest","COMPOSER":"MASA WORKS DESIGN","COMMENT":"A short story"}},"streams":[]}`
@@ -134,10 +136,41 @@ func TestIndexWiresBrandAssets(t *testing.T) {
 	for _, expected := range []string{
 		`rel="icon" href="/static/favicon.ico"`,
 		`src="/static/logo_lets_moka_v1.png"`,
+		`accept=".mp3,.mp4,.ogg"`,
+		`accept=".ass"`,
+		`data-lyrics-editor`,
+		`data-line-count`,
 	} {
 		if !strings.Contains(body, expected) {
 			t.Errorf("index does not wire %q: %s", expected, body)
 		}
+	}
+}
+
+func TestAppScriptContainsInteractiveFormStates(t *testing.T) {
+	server := NewServer(Config{FFProbeExecutable: fakeFFProbe(t)})
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/static/app.js", nil))
+
+	body := response.Body.String()
+	for _, expected := range []string{"Выбранные файлы сохранены", "DataTransfer", "Let's Mock!", "secondaryText"} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("app.js does not contain %q", expected)
+		}
+	}
+}
+
+func TestApplyMetadataUsesArtistDirectoryForHeavenFixture(t *testing.T) {
+	state := FormState{}
+	applyMetadata(&state, media.Metadata{
+		DurationMs: 197033,
+		MediaKind:  "audio",
+		Title:      "HEAVEN",
+		Artists:    []string{"MASA WORKS DESIGN", "初音ミク"},
+	}, "MASA WORKS DESIGN ft.初音ミク - HEAVEN.mp3")
+
+	if state.FilePath != "media/fixtures/MASA-WORKS-DESIGN/MASA WORKS DESIGN ft.初音ミク - HEAVEN.mp3" {
+		t.Fatalf("file path = %q", state.FilePath)
 	}
 }
 

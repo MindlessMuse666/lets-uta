@@ -199,6 +199,8 @@ func validateTimings(timings []Timing, durationMs int64) error {
 }
 
 func BuildFilePath(subdirectory string, filename string) string {
-	subdirectory = strings.Join(strings.Fields(strings.TrimSpace(subdirectory)), "-")
+	subdirectory = strings.Join(strings.FieldsFunc(strings.TrimSpace(subdirectory), func(character rune) bool {
+		return character == ',' || unicode.IsSpace(character)
+	}), "-")
 	return pathpkg.Join("media", "fixtures", subdirectory, filename)
 }

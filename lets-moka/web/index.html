@@ -56,16 +56,16 @@
 
             <label class="file-card" for="media-file">
               <span class="field-label">Медиафайл <strong>*</strong></span>
-              <span class="file-hint">MP3, MP4 или OGG · до 100 MiB</span>
+              <span class="file-hint">MP3, MP4 или OGG · до 100 MiB · выберите или перетащите</span>
               <span class="file-name" data-file-name="media">{{if .MediaFilename}}{{.MediaFilename}}{{else}}Файл не выбран{{end}}</span>
-              <input id="media-file" name="media" type="file" accept=".mp3,.mp4,.ogg,audio/mpeg,audio/ogg,video/mp4" required />
+              <input id="media-file" name="media" type="file" accept=".mp3,.mp4,.ogg" required />
             </label>
 
             <label class="file-card file-card-alt" for="ass-file">
               <span class="field-label">ASS-субтитры <strong>*</strong></span>
-              <span class="file-hint">UTF-8 · переносы и тайминги сохраняются</span>
+              <span class="file-hint">Только ASS · UTF-8 · перетащите сюда</span>
               <span class="file-name" data-file-name="ass">{{if .ASSFilename}}{{.ASSFilename}}{{else}}Файл не выбран{{end}}</span>
-              <input id="ass-file" name="ass" type="file" accept=".ass,text/plain" required />
+              <input id="ass-file" name="ass" type="file" accept=".ass" required />
             </label>
             <p class="sr-only" data-status role="status" aria-live="polite"></p>
           </section>
@@ -111,7 +111,7 @@
               </label>
               <div class="field field-wide meaning-field">
                 <label class="field-label" for="meaning">Смысл или описание</label>
-                <textarea id="meaning" name="meaning" rows="4" {{if .MeaningNull}}readonly{{end}} placeholder="Можно оставить несколько абзацев">{{.Meaning}}</textarea>
+                <textarea id="meaning" name="meaning" rows="4" data-autogrow {{if .MeaningNull}}readonly{{end}} placeholder="Можно оставить несколько абзацев">{{.Meaning}}</textarea>
                 <label class="check-row" for="meaning-null">
                   <input id="meaning-null" name="meaningNull" type="checkbox" value="true" {{if .MeaningNull}}checked{{end}} />
                   <span>NULL — сохранить значение визуально, записать в JSON как null</span>
@@ -126,24 +126,27 @@
               <h2 id="lyrics-title">Текст и перевод</h2>
               <p>Первичный текст получает тайминги из ASS. Перевод использует те же строки без дубликата таймингов.</p>
             </div>
-            <label class="field field-wide lyric-field">
-              <span class="field-label">Основной текст · 日本語 <strong>*</strong></span>
-              <textarea name="primaryText" rows="10" required placeholder="Каждая строка должна оставаться на своём месте">{{.PrimaryText}}</textarea>
-              <span class="field-hint">Переносы строк сохраняются</span>
-            </label>
-            <div class="translation-grid">
-              <label class="field">
+            <div class="lyrics-editor" data-lyrics-editor>
+              <label class="lyric-column" data-lyric-column="primary">
+                <span class="field-label">Основной текст · 日本語 <strong>*</strong></span>
+                <textarea name="primaryText" rows="10" data-autogrow required placeholder="Каждая строка должна оставаться на своём месте">{{.PrimaryText}}</textarea>
+                <span class="field-hint">Переносы строк сохраняются</span>
+              </label>
+              <label class="lyric-column" data-lyric-column="secondary">
                 <span class="field-label">Язык перевода</span>
-                <select name="secondaryLanguage">
+                <select name="secondaryLanguage" aria-describedby="translation-hint">
                   <option value="">Не добавлять</option>
                   <option value="ru" {{if eq .SecondaryLanguage "ru"}}selected{{end}}>Русский</option>
                   <option value="en" {{if eq .SecondaryLanguage "en"}}selected{{end}}>English</option>
                 </select>
+                <span class="field-label secondary-label">Перевод</span>
+                <textarea name="secondaryText" rows="10" data-autogrow {{if not .SecondaryLanguage}}disabled{{end}} placeholder="Столько же строк, сколько в 日本語">{{.SecondaryText}}</textarea>
+                <span id="translation-hint" class="field-hint">Выберите язык, чтобы включить перевод</span>
               </label>
-              <label class="field">
-                <span class="field-label">Перевод</span>
-                <textarea name="secondaryText" rows="5" placeholder="Столько же строк, сколько в 日本語">{{.SecondaryText}}</textarea>
-              </label>
+            </div>
+            <div class="lyrics-status" data-lyrics-status aria-live="polite">
+              <span data-line-count>Строки: —</span>
+              <span data-sync-message>Выберите язык перевода или оставьте поле отключённым.</span>
             </div>
           </section>
 

@@ -39,7 +39,9 @@ export default tseslint.config(
     languageOptions: {
       globals: {
         Blob: 'readonly',
+        DataTransfer: 'readonly',
         DOMParser: 'readonly',
+        Event: 'readonly',
         FormData: 'readonly',
         URL: 'readonly',
         document: 'readonly',
