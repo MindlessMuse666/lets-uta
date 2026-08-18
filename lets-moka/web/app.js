@@ -89,7 +89,7 @@
       try {
         await navigator.clipboard.writeText(result.textContent || '');
         setStatus('JSON скопирован в буфер обмена.');
-    } catch {
+      } catch {
         setStatus('Не удалось скопировать автоматически. Выделите JSON и скопируйте его вручную.');
       }
     });
