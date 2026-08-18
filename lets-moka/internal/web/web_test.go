@@ -113,12 +113,30 @@ func TestHealthAndStaticAssets(t *testing.T) {
 		{path: "/healthz", contentType: "application/json"},
 		{path: "/static/styles.css", contentType: "text/css"},
 		{path: "/static/app.js", contentType: "text/javascript"},
+		{path: "/static/favicon.ico", contentType: "image/x-icon"},
+		{path: "/static/logo_lets_moka_v1.png", contentType: "image/png"},
 	} {
 		request := httptest.NewRequest(http.MethodGet, test.path, nil)
 		response := httptest.NewRecorder()
 		server.ServeHTTP(response, request)
 		if response.Code != http.StatusOK || !strings.Contains(response.Header().Get("Content-Type"), test.contentType) {
 			t.Errorf("%s: status/content type = %d/%q", test.path, response.Code, response.Header().Get("Content-Type"))
+		}
+	}
+}
+
+func TestIndexWiresBrandAssets(t *testing.T) {
+	server := NewServer(Config{FFProbeExecutable: fakeFFProbe(t)})
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/", nil))
+
+	body := response.Body.String()
+	for _, expected := range []string{
+		`rel="icon" href="/static/favicon.ico"`,
+		`src="/static/logo_lets_moka_v1.png"`,
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("index does not wire %q: %s", expected, body)
 		}
 	}
 }

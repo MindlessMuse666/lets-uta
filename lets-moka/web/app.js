@@ -40,12 +40,18 @@
         const response = await fetch(form.action, { method: 'POST', body: metadataForm });
         const markup = await response.text();
         const parsed = new DOMParser().parseFromString(markup, 'text/html');
-        ['title', 'filePath', 'mediaKind', 'durationMs', 'artists', 'composers', 'meaning'].forEach((name) => {
-          const current = form.elements.namedItem(name);
-          const next = parsed.querySelector(`[name="${name}"]`);
-          if (current && next && 'value' in next) current.value = next.value;
-        });
-        setStatus(response.ok || response.status === 400 ? 'Метаданные медиафайла заполнены. Теперь выберите ASS.' : 'Не удалось прочитать метаданные медиафайла.');
+        ['title', 'filePath', 'mediaKind', 'durationMs', 'artists', 'composers', 'meaning'].forEach(
+          (name) => {
+            const current = form.elements.namedItem(name);
+            const next = parsed.querySelector(`[name="${name}"]`);
+            if (current && next && 'value' in next) current.value = next.value;
+          }
+        );
+        setStatus(
+          response.ok || response.status === 400
+            ? 'Метаданные медиафайла заполнены. Теперь выберите ASS.'
+            : 'Не удалось прочитать метаданные медиафайла.'
+        );
       } catch (_error) {
         setStatus('Не удалось прочитать метаданные медиафайла. Проверьте локальный сервер.');
       } finally {
@@ -68,7 +74,11 @@
   if (meaningNull && meaningInput) {
     meaningNull.addEventListener('change', () => {
       meaningInput.readOnly = meaningNull.checked;
-      setStatus(meaningNull.checked ? 'Смысл будет записан как NULL.' : 'Смысл снова включён для редактирования.');
+      setStatus(
+        meaningNull.checked
+          ? 'Смысл будет записан как NULL.'
+          : 'Смысл снова включён для редактирования.'
+      );
     });
   }
 

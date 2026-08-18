@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	mokaassets "lets-moka"
 	"lets-moka/internal/ass"
 	"lets-moka/internal/media"
 	"lets-moka/internal/mock"
@@ -116,23 +117,34 @@ func (s *Server) handleStatic(response http.ResponseWriter, request *http.Reques
 		return
 	}
 	name := strings.TrimPrefix(request.URL.Path, "/static/")
-	if name != "app.js" && name != "styles.css" {
-		http.NotFound(response, request)
-		return
-	}
-	content, err := assets.Assets.ReadFile(name)
+	content, contentType, err := staticAsset(name)
 	if err != nil {
 		http.NotFound(response, request)
 		return
-	}
-	contentType := "text/javascript; charset=utf-8"
-	if name == "styles.css" {
-		contentType = "text/css; charset=utf-8"
 	}
 	response.Header().Set("Content-Type", contentType)
 	response.Header().Set("Cache-Control", "no-cache")
 	if request.Method == http.MethodGet {
 		_, _ = response.Write(content)
+	}
+}
+
+func staticAsset(name string) ([]byte, string, error) {
+	switch name {
+	case "app.js":
+		content, err := assets.Assets.ReadFile(name)
+		return content, "text/javascript; charset=utf-8", err
+	case "styles.css":
+		content, err := assets.Assets.ReadFile(name)
+		return content, "text/css; charset=utf-8", err
+	case "favicon.ico":
+		content, err := mokaassets.StaticAssets.ReadFile(name)
+		return content, "image/x-icon", err
+	case "logo_lets_moka_v1.png":
+		content, err := mokaassets.StaticAssets.ReadFile(name)
+		return content, "image/png", err
+	default:
+		return nil, "", os.ErrNotExist
 	}
 }
 
