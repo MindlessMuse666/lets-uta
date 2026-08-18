@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo_lets_uta_v1.png" alt="Логотип Lets Uta" width="128" height="128" />
+<img src="logo_lets_uta_v1.png" alt="Логотип Lets Uta" width="185" height="185" />
 
 # 🎤 Lets Uta!
 
@@ -121,10 +121,12 @@ npm run preview
 
 Проект распространяется по лицензии [GNU General Public License v3.0](LICENSE).
 
+---
+
 <div align="center">
-  <img src="logo_lets_uta_v1.png" alt="Логотип Lets Uta" width="88" height="88" />
+  <img src="logo_lets_uta_v1.png" alt="Логотип Lets Uta" width="175" height="175" />
   <br>
-  <sub><b>Lets Uta // Локальное караоке для вокалоидов</b></sub>
+  <sub><b>Lets Uta // Караоке для вокалоидов</b></sub>
   <br>
   <sup><i>made with ❤️ by <a href="https://github.com/MindlessMuse666">MindlessMuse666</a></i></sup>
 </div>
