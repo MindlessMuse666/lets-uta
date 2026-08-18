@@ -6,5 +6,7 @@
     "src/lib/server/media.ts",
     "src/lib/server/paths.ts",
     "src/lib/server/songs.ts"
-  ]
+  ],
+  "ignore": ["lets-moka/**"],
+  "ignoreBinaries": ["gofmt"]
 }
