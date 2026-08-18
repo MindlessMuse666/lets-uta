@@ -1,0 +1,170 @@
+[
+  {
+    "title": "HEAVEN",
+    "filePath": "media/fixtures/MASA-WORKS-DESIGN/MASA WORKS DESIGN ft.初音ミク - HEAVEN.mp3",
+    "mediaKind": "audio",
+    "durationMs": 197033,
+    "meaning": "Это светлая, но щемящая баллада о переходе в иной мир (возможно, после смерти) и о памяти, которая остаётся. Лодка, отплывающая на рассвете, уносит чувства людей в новую реальность, где нет боли — только искренняя радость. Лирический герой даёт последнее обещание: навестить любимого человека во сне, и просит не забывать его. В конце он говорит о неизбежном прощании, но называет его «нежным» — потому что их связь скреплена общим обещанием. Песня учит принимать конец как часть пути и верить, что души встретятся снова.",
+    "composers": ["MASA WORKS DESIGN"],
+    "artists": ["MASA WORKS DESIGN", "初音ミク"],
+    "lyrics": [
+      {
+        "language": "ja",
+        "isPrimary": true,
+        "text": "夜が明ける度に\n見えなくなる皆の想い乗せて\n漕ぎだす船に揺られて\n新しい世界へ\nいつか見てた夢の話\n長い時を旅して歌う\n辛い事は無いよ\nだから心からの喜びをあげる\n最後の約束\nいつか君の夢に会いに行くから\n僕を忘れないでおくれ\nこの想い贈るよ\n夜が明ける度に\n見えなくなる皆の想い乗せて\n漕ぎだす船に揺られて\n新しい世界へ\nいつか見てた夢の話\n長い時を旅して歌う\n辛い事は無いよ\nだから心からの喜びをあげる\n世界を照らす太陽が沈む時に\n君の世界に逢える\nいつか僕らもお別れの時が来るから\n優しい終わり君と僕の約束",
+        "timings": [
+          {
+            "lineIndex": 0,
+            "startTime": 19450,
+            "endTime": 24160,
+            "source": "import"
+          },
+          {
+            "lineIndex": 1,
+            "startTime": 24370,
+            "endTime": 30290,
+            "source": "import"
+          },
+          {
+            "lineIndex": 2,
+            "startTime": 30290,
+            "endTime": 35630,
+            "source": "import"
+          },
+          {
+            "lineIndex": 3,
+            "startTime": 35630,
+            "endTime": 38390,
+            "source": "import"
+          },
+          {
+            "lineIndex": 4,
+            "startTime": 38390,
+            "endTime": 43170,
+            "source": "import"
+          },
+          {
+            "lineIndex": 5,
+            "startTime": 43170,
+            "endTime": 47870,
+            "source": "import"
+          },
+          {
+            "lineIndex": 6,
+            "startTime": 47870,
+            "endTime": 51970,
+            "source": "import"
+          },
+          {
+            "lineIndex": 7,
+            "startTime": 51970,
+            "endTime": 60130,
+            "source": "import"
+          },
+          {
+            "lineIndex": 8,
+            "startTime": 77160,
+            "endTime": 81670,
+            "source": "import"
+          },
+          {
+            "lineIndex": 9,
+            "startTime": 81890,
+            "endTime": 87790,
+            "source": "import"
+          },
+          {
+            "lineIndex": 10,
+            "startTime": 87790,
+            "endTime": 93210,
+            "source": "import"
+          },
+          {
+            "lineIndex": 11,
+            "startTime": 93210,
+            "endTime": 96370,
+            "source": "import"
+          },
+          {
+            "lineIndex": 12,
+            "startTime": 96370,
+            "endTime": 100930,
+            "source": "import"
+          },
+          {
+            "lineIndex": 13,
+            "startTime": 100930,
+            "endTime": 107070,
+            "source": "import"
+          },
+          {
+            "lineIndex": 14,
+            "startTime": 107070,
+            "endTime": 112370,
+            "source": "import"
+          },
+          {
+            "lineIndex": 15,
+            "startTime": 112370,
+            "endTime": 115080,
+            "source": "import"
+          },
+          {
+            "lineIndex": 16,
+            "startTime": 115080,
+            "endTime": 119630,
+            "source": "import"
+          },
+          {
+            "lineIndex": 17,
+            "startTime": 119630,
+            "endTime": 124650,
+            "source": "import"
+          },
+          {
+            "lineIndex": 18,
+            "startTime": 124650,
+            "endTime": 128770,
+            "source": "import"
+          },
+          {
+            "lineIndex": 19,
+            "startTime": 128770,
+            "endTime": 137830,
+            "source": "import"
+          },
+          {
+            "lineIndex": 20,
+            "startTime": 153250,
+            "endTime": 158400,
+            "source": "import"
+          },
+          {
+            "lineIndex": 21,
+            "startTime": 158400,
+            "endTime": 163070,
+            "source": "import"
+          },
+          {
+            "lineIndex": 22,
+            "startTime": 163070,
+            "endTime": 167970,
+            "source": "import"
+          },
+          {
+            "lineIndex": 23,
+            "startTime": 167970,
+            "endTime": 175230,
+            "source": "import"
+          }
+        ]
+      },
+      {
+        "language": "ru",
+        "isPrimary": false,
+        "text": "Каждый раз, когда занимается рассвет,\nСтановятся невидимыми, с чувствами всех на борту,\nНа отплывающей лодке, покачиваясь,\nВ новый мир.\nИстория мечты, что когда-то видел,\nПутешествуя долгие времена, пою,\nНет никаких печалей,\nПотому дарю тебе радость от сердца.\nПоследнее обещание:\nКогда-нибудь приду к твоей мечте,\nТы не забывай меня,\nЭто чувство посылаю тебе.\nКаждый раз, когда занимается рассвет,\nСтановятся невидимыми, с чувствами всех на борту,\nНа отплывающей лодке, покачиваясь,\nВ новый мир.\nИстория мечты, что когда-то видел,\nПутешествуя долгие времена, пою,\nНет никаких печалей,\nПотому дарю тебе радость от сердца.\nКогда солнце, мир озаряя, заходит,\nВстречу я твой мир.\nКогда-нибудь настанет и наш час прощания,\nНежный конец — обещанье с тобой.",
+        "timings": []
+      }
+    ]
+  }
+]
