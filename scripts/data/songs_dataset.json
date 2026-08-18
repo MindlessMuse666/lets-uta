@@ -1,6 +1,312 @@
 [
   {
     "title": "ドンドルマ",
+    "filePath": "media/fixtures/MASA-WORKS-DESIGN/MASA WORKS DESIGN ft.LosstimeLife-ドンドルマ.mp4",
+    "mediaKind": "video",
+    "durationMs": 202060,
+    "meaning": "Мрачная, гротескная притча о массовом безумии и зависимостях. Мороженое «Дондорума» - символ притягательного, но сомнительного явления (алкоголь, наркотики, культ потребления). Таинственные клоуны продают его, улыбаясь, но на самом деле плача; покупатели слепо ведутся на «холодное искушение», теряя контроль. За яркой вывеской скрывается сомнительный состав, рецепт неизвестен, но все требуют ещё. Финал - все «сходят с ума» и становятся холодными, что символизирует потерю человечности. Песня - предостережение о том, как легко общество поддаётся сладкому обману.",
+    "composers": ["MASA WORKS DESIGN"],
+    "artists": ["LosstimeLife"],
+    "lyrics": [
+      {
+        "language": "ja",
+        "isPrimary": true,
+        "text": "夏の不思議な市場にだけあるその氷菓\n私があなたに出した評価\nお金を握った子供が群がり\n私の全て、そのドンドルマ\n冷たい誘い\n群がる子供が\n皆歌いだす\nそれがドンドルマ\n不思議な味と魅力もつその氷菓\n周りがあなたに出した評価\nお金を握った大人が群がり\n私の全て、そのドンドルマ\nドンドルマ\nドンドルマ\nそれ食べて、お歌を歌え皆盛り上げて\nちょっとやそっとじゃ無くならない\nアイスを満載販売カー\n伝統掲げた看板の裏で\n怪しい氷菓を練り上げばら撒く\n大人も知らないピエロの出どころ\nドンドルマとだけ喋る君の名は？\n孤独のドンドルマ\n怪しい氷菓を練り上げばら撒く声\n泣いてるピエロ達\nでも、ピエロが売り続ける\nそのドンドルマ\n冷たい誘い\n群がる大人が\n皆踊りだす\nそれがドンドルマ\nそれをくれ！白いアイスを！\nまるで中毒この味の\nいつでも人気のピエロのアイス屋\n味の秘密は誰も知らない\nそれをくれ！白いアイスを！\nまるで中毒この味の\nいつでも人気のピエロのアイス屋\n味の秘密は誰も知らない\n皆のドンドルマ\n怪しい氷菓を練り上げ増える人と\n笑顔のピエロ達\nでも、ピエロが売り続ける\nそのドンドルマ\n悲しい誘い\n皆がイカれだす\n冷たい身体で\nこれがドンドルマ",
+        "timings": [
+          {
+            "lineIndex": 0,
+            "startTime": 4450,
+            "endTime": 9730,
+            "source": "import"
+          },
+          {
+            "lineIndex": 1,
+            "startTime": 9730,
+            "endTime": 13790,
+            "source": "import"
+          },
+          {
+            "lineIndex": 2,
+            "startTime": 13790,
+            "endTime": 18080,
+            "source": "import"
+          },
+          {
+            "lineIndex": 3,
+            "startTime": 18080,
+            "endTime": 22490,
+            "source": "import"
+          },
+          {
+            "lineIndex": 4,
+            "startTime": 24520,
+            "endTime": 26840,
+            "source": "import"
+          },
+          {
+            "lineIndex": 5,
+            "startTime": 26840,
+            "endTime": 31250,
+            "source": "import"
+          },
+          {
+            "lineIndex": 6,
+            "startTime": 33330,
+            "endTime": 35600,
+            "source": "import"
+          },
+          {
+            "lineIndex": 7,
+            "startTime": 37690,
+            "endTime": 39990,
+            "source": "import"
+          },
+          {
+            "lineIndex": 8,
+            "startTime": 39990,
+            "endTime": 44270,
+            "source": "import"
+          },
+          {
+            "lineIndex": 9,
+            "startTime": 44270,
+            "endTime": 48640,
+            "source": "import"
+          },
+          {
+            "lineIndex": 10,
+            "startTime": 48640,
+            "endTime": 52950,
+            "source": "import"
+          },
+          {
+            "lineIndex": 11,
+            "startTime": 52950,
+            "endTime": 57390,
+            "source": "import"
+          },
+          {
+            "lineIndex": 12,
+            "startTime": 64330,
+            "endTime": 66210,
+            "source": "import"
+          },
+          {
+            "lineIndex": 13,
+            "startTime": 72810,
+            "endTime": 74830,
+            "source": "import"
+          },
+          {
+            "lineIndex": 14,
+            "startTime": 74830,
+            "endTime": 78810,
+            "source": "import"
+          },
+          {
+            "lineIndex": 15,
+            "startTime": 78810,
+            "endTime": 80850,
+            "source": "import"
+          },
+          {
+            "lineIndex": 16,
+            "startTime": 80850,
+            "endTime": 83110,
+            "source": "import"
+          },
+          {
+            "lineIndex": 17,
+            "startTime": 83110,
+            "endTime": 85410,
+            "source": "import"
+          },
+          {
+            "lineIndex": 18,
+            "startTime": 85410,
+            "endTime": 87440,
+            "source": "import"
+          },
+          {
+            "lineIndex": 19,
+            "startTime": 87440,
+            "endTime": 89750,
+            "source": "import"
+          },
+          {
+            "lineIndex": 20,
+            "startTime": 89750,
+            "endTime": 91950,
+            "source": "import"
+          },
+          {
+            "lineIndex": 21,
+            "startTime": 91950,
+            "endTime": 94510,
+            "source": "import"
+          },
+          {
+            "lineIndex": 22,
+            "startTime": 95630,
+            "endTime": 100710,
+            "source": "import"
+          },
+          {
+            "lineIndex": 23,
+            "startTime": 100710,
+            "endTime": 103690,
+            "source": "import"
+          },
+          {
+            "lineIndex": 24,
+            "startTime": 104030,
+            "endTime": 107890,
+            "source": "import"
+          },
+          {
+            "lineIndex": 25,
+            "startTime": 107890,
+            "endTime": 109810,
+            "source": "import"
+          },
+          {
+            "lineIndex": 26,
+            "startTime": 111640,
+            "endTime": 114190,
+            "source": "import"
+          },
+          {
+            "lineIndex": 27,
+            "startTime": 116190,
+            "endTime": 118530,
+            "source": "import"
+          },
+          {
+            "lineIndex": 28,
+            "startTime": 120650,
+            "endTime": 122850,
+            "source": "import"
+          },
+          {
+            "lineIndex": 29,
+            "startTime": 124850,
+            "endTime": 127150,
+            "source": "import"
+          },
+          {
+            "lineIndex": 30,
+            "startTime": 127150,
+            "endTime": 129240,
+            "source": "import"
+          },
+          {
+            "lineIndex": 31,
+            "startTime": 129240,
+            "endTime": 130930,
+            "source": "import"
+          },
+          {
+            "lineIndex": 32,
+            "startTime": 130930,
+            "endTime": 133390,
+            "source": "import"
+          },
+          {
+            "lineIndex": 33,
+            "startTime": 133390,
+            "endTime": 135560,
+            "source": "import"
+          },
+          {
+            "lineIndex": 34,
+            "startTime": 135560,
+            "endTime": 138030,
+            "source": "import"
+          },
+          {
+            "lineIndex": 35,
+            "startTime": 138030,
+            "endTime": 139920,
+            "source": "import"
+          },
+          {
+            "lineIndex": 36,
+            "startTime": 139920,
+            "endTime": 142130,
+            "source": "import"
+          },
+          {
+            "lineIndex": 37,
+            "startTime": 142130,
+            "endTime": 144290,
+            "source": "import"
+          },
+          {
+            "lineIndex": 38,
+            "startTime": 144290,
+            "endTime": 146890,
+            "source": "import"
+          },
+          {
+            "lineIndex": 39,
+            "startTime": 147920,
+            "endTime": 153000,
+            "source": "import"
+          },
+          {
+            "lineIndex": 40,
+            "startTime": 153000,
+            "endTime": 155970,
+            "source": "import"
+          },
+          {
+            "lineIndex": 41,
+            "startTime": 156520,
+            "endTime": 160080,
+            "source": "import"
+          },
+          {
+            "lineIndex": 42,
+            "startTime": 160080,
+            "endTime": 162160,
+            "source": "import"
+          },
+          {
+            "lineIndex": 43,
+            "startTime": 164270,
+            "endTime": 166530,
+            "source": "import"
+          },
+          {
+            "lineIndex": 44,
+            "startTime": 168560,
+            "endTime": 170880,
+            "source": "import"
+          },
+          {
+            "lineIndex": 45,
+            "startTime": 172920,
+            "endTime": 175240,
+            "source": "import"
+          },
+          {
+            "lineIndex": 46,
+            "startTime": 177240,
+            "endTime": 179600,
+            "source": "import"
+          }
+        ]
+      },
+      {
+        "language": "ru",
+        "isPrimary": false,
+        "text": "Только в летнем таинственном базаре\nесть это ледяное лакомство.\nЯ вынесла тебе свой приговор.\nДети с зажатыми в кулаках монетками толпятся -\nВсё моё существо -\nэта Дондорума.\nХолодное искушение.\nДети толпятся.\nВсе запевают.\nЭто Дондорума.\nЛакомство с диковинным вкусом\nи чарами.\nОкружающие вынесли тебе свой приговор.\nВзрослые с деньгами в кулаках толпятся -\nВсё моё существо -\nэта Дондорума.\nДондорума.\nДондорума.\nЕшьте её, пойте песни,\nвсе веселитесь!\nЕё не убавится от пары-тройки кусков.\nФургон с мороженым,\nбитком набитым льдом.\nЗа вывеской, что чтит традиции,\nЗамешивают и разбрасывают\nподозрительное мороженое.\nОткуда взялся этот клоун,\nкоторого не знают даже взрослые?\nТы, говорящий только «Дондорума», - как тебя зовут?\nДондорума одиночества.\nГолос, что месит\nи разбрасывает странное мороженое,\nПлачущие клоуны…\nНо клоун продолжает продавать -\nТу самую Дондоруму.\nХолодное искушение.\nВзрослые толпятся.\nВсе пускаются в пляс.\nЭто Дондорума.\nДайте мне это!\nБелое мороженое!\nВкус, словно наркотик.\nВечно популярная палатка клоуна\nс мороженым.\nНикто не знает секрета этого вкуса.\nДайте мне это!\nБелое мороженое!\nВкус, словно наркотик.\nВечно популярная палатка клоуна\nс мороженым.\nНикто не знает секрета этого вкуса.\nВсеобщая Дондорума.\nЛюди месят и множат подозрительный лёд.\nУлыбающиеся клоуны.\nНо клоун продолжает продавать -\nТу самую Дондоруму.\nГрустное искушение.\nВсе сходят с ума.\nХолодным телом.\nЭто и есть Дондорума.",
+        "timings": []
+      }
+    ]
+  },
+  {
+    "title": "ドンドルマ",
     "filePath": "media/fixtures/MASA-WORKS-DESIGN/MASA WORKS DESIGN ft.LosstimeLife-ドンドルマ.mp3",
     "mediaKind": "audio",
     "durationMs": 202060,
