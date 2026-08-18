@@ -33,7 +33,6 @@ uploads/*
 .DS_Store
 Thumbs.db
 *.log
-deploy-error.*
 
 # VENV
 .venv/
@@ -43,3 +42,6 @@ __pycache__/
 
 # IDE
 .vscode/
+
+# CI/CD
+# DEPLOY-INCIDENTS.md
