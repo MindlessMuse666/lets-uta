@@ -1,8 +1,8 @@
-# Lets Uta
-
 <div align="center">
 
 <img src="static/logo_lets_uta_v1.png" alt="Логотип Lets Uta — локальный караоке-плеер" width="185" height="185" />
+
+<h1>Lets Uta ㄟ(≧◇≦)ㄏ</h1>
 
 **Локальный караоке-медиаплеер для вокалоидов**
 
@@ -129,7 +129,7 @@ Foundation, library, playback, shared translation timings и асинхронн�
 ---
 
 <div align="center">
-  <img src="static/logo_lets_uta_v1.png" alt="Логотип Lets Uta — локальный караоке-плеер" width="175" height="175" />
+  <img src="static/logo_lets_uta_v1.png" alt="Логотип Lets Uta — локальный караоке-плеер" width="150" height="150" />
   <br>
   <sub><b>Lets Uta // Караоке для вокалоидов</b></sub>
   <br>
