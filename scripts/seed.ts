@@ -1,12 +1,29 @@
-import { readFile } from 'node:fs/promises';
+import { access, copyFile, mkdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { getDb, closeDb } from '../src/lib/server/db';
+import { resolveStoredPath } from '../src/lib/server/paths';
 import { parseSongsDataset } from './seed-lib';
+
+async function copyFixtureMedia(dataset: ReturnType<typeof parseSongsDataset>): Promise<void> {
+  for (const song of dataset) {
+    const sourcePath = path.resolve(process.cwd(), song.filePath);
+    try {
+      await access(sourcePath);
+    } catch {
+      continue;
+    }
+
+    const targetPath = resolveStoredPath(song.filePath);
+    await mkdir(path.dirname(targetPath), { recursive: true });
+    await copyFile(sourcePath, targetPath);
+  }
+}
 
 async function main(): Promise<void> {
   const datasetPath = path.resolve(process.cwd(), 'scripts/data/songs_dataset.json');
   const dataset = parseSongsDataset(await readFile(datasetPath, 'utf8'));
+  await copyFixtureMedia(dataset);
   const db = getDb();
   const now = new Date().toISOString();
 

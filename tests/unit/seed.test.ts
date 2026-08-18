@@ -12,11 +12,15 @@ describe('seed dataset parser', () => {
     );
     const songs = parseSongsDataset(raw);
 
-    expect(songs).toHaveLength(4);
+    expect(songs).toHaveLength(5);
     expect(songs[0].lyrics.find((lyric) => lyric.isPrimary)?.language).toBe('ja');
     const heaven = songs.find((song) => song.title === 'HEAVEN');
     expect(heaven?.filePath).toContain('MASA-WORKS-DESIGN');
     expect(heaven?.lyrics.find((lyric) => lyric.isPrimary)?.timings).toHaveLength(24);
+    const dondoruma = songs.find((song) => song.filePath.endsWith('ドンドルマ.mp4'));
+    const translation = dondoruma?.lyrics.find((lyric) => lyric.language === 'ru');
+    expect(translation?.text.split('\n')).toHaveLength(47);
+    expect(translation?.text.split('\n')[0]).not.toBe('ДОНДОРУМА');
   });
 
   it('rejects malformed dataset input', () => {

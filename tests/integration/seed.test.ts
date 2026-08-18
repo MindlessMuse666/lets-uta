@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -32,9 +32,14 @@ describe('dataset seed', () => {
     });
 
     const db = getDb(path.join(dataRoot, 'karaoke.db'));
-    expect(db.prepare('SELECT COUNT(*) AS count FROM songs').get()).toEqual({ count: 4 });
-    expect(db.prepare('SELECT COUNT(*) AS count FROM lyrics').get()).toEqual({ count: 7 });
-    expect(db.prepare('SELECT COUNT(*) AS count FROM timings').get()).toEqual({ count: 77 });
+    expect(db.prepare('SELECT COUNT(*) AS count FROM songs').get()).toEqual({ count: 5 });
+    expect(db.prepare('SELECT COUNT(*) AS count FROM lyrics').get()).toEqual({ count: 9 });
+    expect(db.prepare('SELECT COUNT(*) AS count FROM timings').get()).toEqual({ count: 124 });
     closeDb(db);
+
+    const fixtureDirectory = path.join(dataRoot, 'media/fixtures/MASA-WORKS-DESIGN');
+    const seededMedia = readdirSync(fixtureDirectory);
+    expect(seededMedia).toContain('MASA WORKS DESIGN ft.初音ミク - HEAVEN.mp3');
+    expect(seededMedia.some((file) => file.endsWith('.mp4'))).toBe(true);
   });
 });
