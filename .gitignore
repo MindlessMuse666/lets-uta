@@ -45,3 +45,9 @@ __pycache__/
 
 # CI/CD
 # DEPLOY-INCIDENTS.md
+
+# LET'S MOKA
+lets-moka/lets-moka
+lets-moka/lets-moka.exe
+lets-moka/*.test
+lets-moka/coverage.out
