@@ -1,6 +1,7 @@
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import Database from 'better-sqlite3';
 import { describe, expect, it } from 'vitest';
 import { closeDb, getDb } from '../../src/lib/server/db';
 import { applyMigrations } from '../../src/lib/server/migrations';
@@ -97,5 +98,48 @@ describe('database foundation', () => {
     } finally {
       rmSync(directory, { recursive: true, force: true });
     }
+  });
+
+  it('repairs legacy lyric roles before adding the single-secondary index', () => {
+    const db = new Database(':memory:');
+    db.pragma('foreign_keys = ON');
+    for (const migrationFile of ['001_initial.sql', '002_sync_jobs.sql', '003_indexes.sql']) {
+      db.exec(readFileSync(path.resolve('migrations', migrationFile), 'utf8'));
+    }
+
+    const now = new Date().toISOString();
+    const songId = Number(
+      db
+        .prepare(
+          `INSERT INTO songs
+            (title, filePath, mediaKind, durationMs, composers, artists, createdAt, updatedAt)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+        )
+        .run('Legacy song', 'media/legacy.mp3', 'audio', 1000, '[]', '[]', now, now).lastInsertRowid
+    );
+    const insertLyric = db.prepare(
+      `INSERT INTO lyrics (songId, language, isPrimary, text, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    );
+    insertLyric.run(songId, 'ru', 1, 'Старая роль', now, now);
+    insertLyric.run(songId, 'ja', 0, '日本語', now, now);
+    insertLyric.run(songId, 'en', 0, 'Old translation', now, now);
+
+    applyMigrations(db);
+
+    expect(
+      db.prepare('SELECT language, isPrimary FROM lyrics WHERE songId = ? ORDER BY id').all(songId)
+    ).toEqual([
+      { language: 'ru', isPrimary: 0 },
+      { language: 'ja', isPrimary: 1 }
+    ]);
+    expect(
+      db
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type = 'index' AND name = 'idx_lyrics_secondary_song'"
+        )
+        .get()
+    ).toEqual({ name: 'idx_lyrics_secondary_song' });
+    db.close();
   });
 });
