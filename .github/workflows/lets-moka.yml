@@ -44,4 +44,4 @@ jobs:
         run: go test ./...
 
       - name: Build standalone binary
-        run: go build -o lets-moka ./cmd/lets-moka
+        run: go build -o /tmp/lets-moka ./cmd/lets-moka
