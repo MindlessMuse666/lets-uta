@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import '../app.css';
 
   let { children }: { children: import('svelte').Snippet } = $props();
@@ -25,4 +26,38 @@
   });
 </script>
 
+<header class="site-header">
+  <a href={resolve('/')} aria-label="Lets Uta — библиотека">
+    <img src="/logo_lets_uta_v1.png" alt="Lets Uta" />
+  </a>
+</header>
+
 {@render children()}
+
+<style>
+  .site-header {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-height: 4.5rem;
+    padding: 0.85rem clamp(1rem, 4vw, 4rem);
+    border-bottom: 1px solid rgba(31, 32, 36, 0.28);
+    background: var(--paper, #eee9df);
+  }
+
+  .site-header a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.25rem;
+  }
+
+  .site-header img {
+    display: block;
+    width: min(12rem, 48vw);
+    height: auto;
+    max-height: 3rem;
+    object-fit: contain;
+    object-position: left center;
+  }
+</style>

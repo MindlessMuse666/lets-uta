@@ -4,6 +4,7 @@ import { validateTranslationInput } from '$lib/karaoke/validate';
 import { addTranslation } from '$lib/server/lyrics';
 import { getSettings } from '$lib/server/settings';
 import { getSongWithDetails } from '$lib/server/songs';
+import { getLatestSyncJob } from '$lib/server/sync-jobs';
 
 function parseSongId(value: string): number | undefined {
   const id = Number(value);
@@ -21,7 +22,7 @@ export const load: PageServerLoad = ({ params }) => {
   const id = parseSongId(params.id);
   const song = id ? getSongWithDetails(id) : undefined;
   if (!song) error(404, 'Песня не найдена');
-  return { song, settings: getSettings() };
+  return { song, settings: getSettings(), syncJob: getLatestSyncJob(song.id) };
 };
 
 export const actions: Actions = {

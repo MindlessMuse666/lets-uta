@@ -1,13 +1,16 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { invalidateAll } from '$app/navigation';
   import { resolve } from '$app/paths';
   import Badge from '$lib/ui/Badge.svelte';
   import Dialog from '$lib/ui/Dialog.svelte';
   import LyricLines from '$lib/ui/LyricLines.svelte';
   import MediaPlayer from '$lib/ui/MediaPlayer.svelte';
+  import ProgressBar from '$lib/ui/ProgressBar.svelte';
   import Select from '$lib/ui/Select.svelte';
   import TextArea from '$lib/ui/TextArea.svelte';
   import type { ActionData, PageData } from './$types';
+  import type { SyncJob } from '$lib/karaoke/types';
 
   type TranslationErrors = {
     form?: string;
@@ -22,6 +25,10 @@
   }
 
   let { data, form }: { data: PageData; form?: ActionData } = $props();
+  let syncJob = $state<SyncJob | undefined>();
+  let syncError = $state('');
+  let syncStarting = $state(false);
+  let syncTimer: ReturnType<typeof globalThis.setInterval> | undefined;
   let primaryLyric = $derived(data.song.lyrics.find((lyric) => lyric.isPrimary));
   let primaryTimings = $derived(
     primaryLyric ? data.song.timings.filter((timing) => timing.lyricId === primaryLyric.id) : []
@@ -45,10 +52,43 @@
     text: readFormString(translationForm?.values, 'text') ?? ''
   });
 
+  let syncBusy = $derived(syncJob?.status === 'queued' || syncJob?.status === 'running');
+  let syncStatusLabel = $derived(
+    syncJob?.status === 'queued'
+      ? 'В очереди'
+      : syncJob?.status === 'running'
+        ? 'Выполняется'
+        : syncJob?.status === 'succeeded'
+          ? 'Готово'
+          : syncJob?.status === 'cancelled'
+            ? 'Отменено'
+            : syncJob?.status === 'failed'
+              ? 'Ошибка'
+              : ''
+  );
+
   $effect(() => {
+    if (!syncJob && data.syncJob) syncJob = data.syncJob;
     controlsReady = true;
     if (translationForm?.fieldErrors) translationDialogOpen = true;
     if (translationForm?.ok) translationDialogOpen = false;
+  });
+
+  $effect(() => {
+    if (!syncJob || !syncBusy) return;
+    const pollJob = async () => {
+      const response = await globalThis.fetch(
+        resolve(`/songs/${data.song.id}/sync/${syncJob?.id}`)
+      );
+      if (!response.ok) return;
+      syncJob = (await response.json()) as SyncJob;
+      if (syncJob.status === 'succeeded') await invalidateAll();
+    };
+    syncTimer = globalThis.setInterval(() => void pollJob(), 500);
+    return () => {
+      if (syncTimer) globalThis.clearInterval(syncTimer);
+      syncTimer = undefined;
+    };
   });
 
   function handleCurrentTimeChange(value: number): void {
@@ -57,6 +97,50 @@
 
   function handlePlayStateChange(value: boolean): void {
     isPlaying = value;
+  }
+
+  async function startSync(): Promise<void> {
+    syncStarting = true;
+    syncError = '';
+    try {
+      const response = await globalThis.fetch(resolve(`/songs/${data.song.id}/sync`), {
+        method: 'POST'
+      });
+      const payload = (await response.json()) as { jobId?: string; message?: string };
+      if (!response.ok || !payload.jobId) {
+        syncError = payload.message ?? 'Синхронизацию не удалось запустить.';
+        return;
+      }
+      const now = new Date().toISOString();
+      syncJob = {
+        id: payload.jobId,
+        songId: data.song.id,
+        status: 'queued',
+        progress: 0,
+        processedLines: 0,
+        totalLines: primaryLyric ? primaryLyric.text.split(/\r\n?|\n/).filter(Boolean).length : 0,
+        message: null,
+        createdAt: now,
+        startedAt: null,
+        finishedAt: null,
+        cancelRequested: false
+      };
+    } catch {
+      syncError = 'Синхронизацию не удалось запустить. Проверьте соединение с локальным сервером.';
+    } finally {
+      syncStarting = false;
+    }
+  }
+
+  async function cancelSync(): Promise<void> {
+    if (!syncJob) return;
+    const response = await globalThis.fetch(
+      resolve(`/songs/${data.song.id}/sync/${syncJob.id}/cancel`),
+      {
+        method: 'POST'
+      }
+    );
+    if (response.ok) syncJob = (await response.json()) as SyncJob;
   }
 </script>
 
@@ -91,6 +175,40 @@
       oncurrenttimechange={handleCurrentTimeChange}
       onplaystatechange={handlePlayStateChange}
     />
+    <div class="sync-panel" aria-labelledby="sync-heading">
+      <div class="sync-copy">
+        <p class="eyebrow">LOCAL PIPELINE</p>
+        <h3 id="sync-heading">Автоматическая синхронизация</h3>
+        <p>
+          Локальный элайнер подготовит построчные тайминги, не меняя старый результат до успеха.
+        </p>
+      </div>
+      <div class="sync-actions">
+        <button
+          class="sync-button"
+          type="button"
+          onclick={startSync}
+          disabled={syncBusy || syncStarting || !primaryLyric}
+        >
+          {syncStarting ? 'Запуск…' : syncBusy ? syncStatusLabel : 'Синхронизировать'}
+        </button>
+        {#if syncBusy}
+          <button class="sync-cancel" type="button" onclick={cancelSync}>Отменить</button>
+        {/if}
+      </div>
+      {#if syncJob}
+        <div class="sync-status" aria-live="polite">
+          <strong>{syncStatusLabel}</strong>
+          <ProgressBar value={syncJob.progress} label="Прогресс синхронизации" />
+          {#if syncJob.status === 'running' || syncJob.status === 'queued'}
+            <span>{syncJob.processedLines} из {syncJob.totalLines} строк</span>
+          {:else if syncJob.message}
+            <span>{syncJob.message}</span>
+          {/if}
+        </div>
+      {/if}
+      {#if syncError}<p class="sync-error" role="alert">{syncError}</p>{/if}
+    </div>
   </section>
 
   <section
@@ -268,6 +386,78 @@
     border-top: 1px solid #1f2024;
   }
 
+  .sync-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem 2rem;
+    align-items: end;
+    margin-top: 1rem;
+    padding: 1rem 0 0;
+    border-top: 1px solid rgba(31, 32, 36, 0.22);
+  }
+  .sync-copy h3 {
+    margin: 0;
+    font:
+      700 1.25rem/1 Georgia,
+      serif;
+  }
+  .sync-copy p:last-child {
+    max-width: 40rem;
+    margin: 0.5rem 0 0;
+    color: #64636a;
+    line-height: 1.45;
+  }
+  .sync-copy .eyebrow {
+    margin-bottom: 0.5rem;
+  }
+  .sync-actions {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    justify-content: end;
+  }
+  .sync-button,
+  .sync-cancel {
+    min-height: 2.75rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid #1f2024;
+    border-radius: 0;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .sync-button {
+    background: #ffd543;
+    color: #1f2024;
+  }
+  .sync-cancel {
+    background: #f8f4eb;
+    color: #1f2024;
+  }
+  .sync-button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+  }
+  .sync-status {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .sync-status > span {
+    color: #64636a;
+    font:
+      0.78rem/1.3 'Courier New',
+      monospace;
+  }
+  .sync-error {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 0.75rem;
+    border-left: 4px solid #ff4081;
+    background: #fff0f5;
+    color: #a9003d;
+    font-weight: 700;
+  }
+
   .section-heading {
     align-self: start;
   }
@@ -439,6 +629,12 @@
     .song-content-single .lyrics-stage,
     .song-content-pair .lyrics-stage {
       grid-template-columns: 1fr;
+    }
+    .sync-panel {
+      grid-template-columns: 1fr;
+    }
+    .sync-actions {
+      justify-content: start;
     }
   }
 

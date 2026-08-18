@@ -6,7 +6,7 @@ import { closeDb, getDb } from '../../src/lib/server/db';
 import { createLyric } from '../../src/lib/server/lyrics';
 import { createSong } from '../../src/lib/server/songs';
 
-const e2eDataRoot = path.resolve(process.cwd(), 'test-results', 'e2e-data');
+const e2eDataRoot = path.resolve(process.cwd(), '.e2e-data-run');
 const fixtureMediaPath =
   'media/fixtures/MASA-WORKS-DESIGN/MASA WORKS DESIGN ft.LosstimeLife-ドンドルマ.mp3';
 

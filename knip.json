@@ -1,11 +1,13 @@
 {
   "entry": [
     "src/lib/karaoke/types.ts",
+    "src/lib/karaoke/synchronizer.ts",
     "src/lib/karaoke/validate.ts",
     "src/lib/server/lyrics.ts",
     "src/lib/server/media.ts",
     "src/lib/server/paths.ts",
-    "src/lib/server/songs.ts"
+    "src/lib/server/songs.ts",
+    "src/lib/server/timings.ts"
   ],
   "ignore": ["lets-moka/**"],
   "ignoreBinaries": ["gofmt"]

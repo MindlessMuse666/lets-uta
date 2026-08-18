@@ -1,6 +1,6 @@
 # TECH-TASK — локальный караоке-медиаплеер для вокалоидов
 
-**Версия: v2** (17 августа, 2026)
+**Версия: v2.1** (18 августа, 2026)
 
 ## 0. Как читать этот документ
 
@@ -163,6 +163,8 @@ data/
   models/
   tmp/
 static/
+  favicon.ico
+  logo_lets_uta_v1.png
   fonts/
   icons/
   src/
@@ -666,6 +668,12 @@ Selection использует акцентный фон и контрастны
 - При `prefers-reduced-motion: reduce` отключаются декоративные движения и автоскролл с анимацией.
 - Диалог добавления перевода имеет обязательный select языка `ru`/`en`, textarea, счётчик символов, summary ошибок и не блокирует media playback во время async action.
 - Ошибка несовпадения строк показывается рядом с textarea и не закрывает диалог до исправления.
+
+### 6.8. Брендовые assets
+
+- `static/favicon.ico` обслуживается по публичному пути `/favicon.ico` и подключается как favicon в document head.
+- `static/logo_lets_uta_v1.png` обслуживается по публичному пути `/logo_lets_uta_v1.png` и отображается в верхней части общего layout.
+- Logo имеет доступный альтернативный текст и ведёт в библиотеку; отсутствие assets считается ошибкой сборки/проверки интерфейса.
 
 ---
 
@@ -1234,8 +1242,9 @@ CONTRACT GAP
 6. Отмена приводит к `cancelled` без частичной записи.
 7. Вторая активная задача не запускается параллельно.
 8. Missing primary lyric возвращает понятную ошибку.
+9. Favicon доступен по `/favicon.ico`, а logo `logo_lets_uta_v1.png` отображается в верхней части приложения и ведёт в библиотеку.
 
-**Тесты:** mocked worker integration, state transition tests, idempotency, failure preservation, cancellation and polling e2e.
+**Тесты:** mocked worker integration, state transition tests, idempotency, failure preservation, cancellation and polling e2e; asset smoke test для favicon и logo.
 
 **Негативные сценарии:** null alignment, missing model, FFmpeg failure, worker crash, malformed tokens, incomplete mapping.
 

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 
-const e2eDataRoot = path.resolve(process.cwd(), 'test-results', 'e2e-data');
+const e2eDataRoot = path.resolve(process.cwd(), '.e2e-data-run');
 
 export default defineConfig({
   testDir: 'tests/e2e',

@@ -1,5 +1,5 @@
 import { splitText } from './lines';
-import type { SecondaryLanguage, UploadInput } from './types';
+import type { SecondaryLanguage, TimingInput, UploadInput } from './types';
 
 const MAX_MEDIA_SIZE = 100 * 1024 * 1024;
 const MAX_TITLE_LENGTH = 200;
@@ -158,4 +158,45 @@ export function validateTranslationInput(data: {
     ok: true,
     value: { text, language: language as SecondaryLanguage }
   };
+}
+
+export function validateTimings(
+  timings: TimingInput[],
+  lineCount: number,
+  durationMs: number
+): { ok: true; value: TimingInput[] } | { ok: false; errors: string[] } {
+  const errors: string[] = [];
+  const seen = new Set<number>();
+  let previousLineIndex = -1;
+  let previousEndTime = 0;
+
+  for (const timing of timings) {
+    if (
+      !Number.isInteger(timing.lineIndex) ||
+      timing.lineIndex < 0 ||
+      timing.lineIndex >= lineCount
+    ) {
+      errors.push('Timing line index is outside the lyric');
+      continue;
+    }
+    if (seen.has(timing.lineIndex)) errors.push('Timing line indexes must be unique');
+    seen.add(timing.lineIndex);
+    if (timing.lineIndex <= previousLineIndex) errors.push('Timings must be sorted by line index');
+    previousLineIndex = timing.lineIndex;
+    if (!Number.isInteger(timing.startTime) || timing.startTime < 0) {
+      errors.push('Timing start must be a non-negative integer');
+    }
+    if (!Number.isInteger(timing.endTime) || timing.endTime <= timing.startTime) {
+      errors.push('Timing end must be greater than start');
+    }
+    if (!Number.isInteger(timing.endTime) || timing.endTime > durationMs) {
+      errors.push('Timing end must not exceed media duration');
+    }
+    if (timing.startTime < previousEndTime - 1) {
+      errors.push('Neighboring timings overlap by more than 1 ms');
+    }
+    previousEndTime = timing.endTime;
+  }
+
+  return errors.length > 0 ? { ok: false, errors } : { ok: true, value: timings };
 }

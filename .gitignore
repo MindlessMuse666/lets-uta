@@ -8,6 +8,7 @@ opencode.json
 
 # DEPENDENCES
 node_modules
+.e2e-data*/
 
 # BUILD
 .svelte-kit
