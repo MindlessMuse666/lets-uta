@@ -33,5 +33,19 @@ export default tseslint.config(
         window: 'readonly'
       }
     }
+  },
+  {
+    files: ['lets-moka/web/**/*.js'],
+    languageOptions: {
+      globals: {
+        Blob: 'readonly',
+        DOMParser: 'readonly',
+        FormData: 'readonly',
+        URL: 'readonly',
+        document: 'readonly',
+        fetch: 'readonly',
+        navigator: 'readonly'
+      }
+    }
   }
 );

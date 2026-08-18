@@ -52,7 +52,7 @@
             ? 'Метаданные медиафайла заполнены. Теперь выберите ASS.'
             : 'Не удалось прочитать метаданные медиафайла.'
         );
-      } catch (_error) {
+      } catch {
         setStatus('Не удалось прочитать метаданные медиафайла. Проверьте локальный сервер.');
       } finally {
         form.removeAttribute('aria-busy');
@@ -89,7 +89,7 @@
       try {
         await navigator.clipboard.writeText(result.textContent || '');
         setStatus('JSON скопирован в буфер обмена.');
-      } catch (_error) {
+    } catch {
         setStatus('Не удалось скопировать автоматически. Выделите JSON и скопируйте его вручную.');
       }
     });
