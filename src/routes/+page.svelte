@@ -161,17 +161,19 @@
   }
   .filter-strip {
     display: grid;
-    grid-template-columns: 14rem 1fr;
-    gap: 2rem;
+    gap: 1rem;
     padding: 1.25rem 0;
     border-top: 1px solid #1f2024;
     border-bottom: 1px solid #1f2024;
   }
   .filter-strip h2 {
     margin: 0;
+    color: #a9003d;
     font:
-      700 1.15rem/1 Georgia,
+      700 0.78rem/1 'Courier New',
       serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
   }
   .filters {
     display: grid;
@@ -242,10 +244,6 @@
   @media (max-width: 850px) {
     .song-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .filter-strip {
-      grid-template-columns: 1fr;
-      gap: 1rem;
     }
     .filters {
       grid-template-columns: repeat(2, minmax(0, 1fr));

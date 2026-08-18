@@ -73,9 +73,12 @@ test('song page renders the media player and preserves primary lyric', async ({ 
   await expect(page.locator('audio')).toHaveCount(1);
   await expect(page.getByRole('heading', { name: 'Караоке' })).toBeVisible();
   await expect(
-    page.locator('.primary-column').getByText('夏の不思議な市場にだけあるその氷菓')
+    page.locator('.lyrics-ja').getByText('夏の不思議な市場にだけあるその氷菓')
   ).toBeVisible();
-  await expect(page.locator('.translation-column').getByText('Только в летнем')).toBeVisible();
+  await expect(page.locator('.lyrics-ru').getByText('Только в летнем')).toBeVisible();
+  await expect(page.locator('.lyrics-local')).toHaveCount(1);
+  await expect(page.locator('.line-number')).toHaveCount(47);
+  await expect(page.locator('.lyrics-ru [data-line-index="0"]')).not.toContainText('ДОНДОРУМА');
 });
 
 test('seek updates the discrete active lyric line', async ({ page }) => {
@@ -100,11 +103,9 @@ test('translation column shares primary timing without replacing ja lyrics', asy
 
   await expect(page.getByText('夏の不思議な市場にだけあるその氷菓')).toBeVisible();
   await expect(
-    page.locator('.translation-column .lyric-line').filter({ hasText: 'Только в летнем' })
+    page.locator('.lyrics-ru .lyric-line').filter({ hasText: 'Только в летнем' })
   ).toBeVisible();
-  await expect(
-    page.locator('.translation-column [data-line-index="0"][aria-current="true"]')
-  ).toBeVisible();
+  await expect(page.locator('.lyrics-ru [data-line-index="0"][aria-current="true"]')).toBeVisible();
 });
 
 test('async add translation keeps playback controls and validates line count', async ({ page }) => {
@@ -124,7 +125,7 @@ test('async add translation keeps playback controls and validates line count', a
 
   await page.getByLabel('Текст перевода').fill('Первая строка\nВторая строка');
   await page.getByRole('button', { name: 'Сохранить перевод' }).click();
-  await expect(page.locator('.translation-column').getByText('Первая строка')).toBeVisible();
+  await expect(page.locator('.lyrics-ru').getByText('Первая строка')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Вперёд на 5 секунд' })).toBeVisible();
   await expect(page.locator('.lyrics-ja [data-line-index="0"][aria-current="true"]')).toBeVisible();
   await expect(page.locator('.lyrics-ru [data-line-index="0"][aria-current="true"]')).toBeVisible();

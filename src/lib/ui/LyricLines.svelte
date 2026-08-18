@@ -11,6 +11,10 @@
     isPlaying?: boolean;
     autoScrollDelayMs?: number;
     scrollMode?: 'local' | 'page';
+    translation?: {
+      language: 'ru' | 'en';
+      text: string;
+    };
   };
 
   let {
@@ -21,15 +25,19 @@
     language = 'ja',
     isPlaying = false,
     autoScrollDelayMs = 3000,
-    scrollMode = 'local'
+    scrollMode = 'local',
+    translation
   }: Props = $props();
   let sectionElement = $state<HTMLElement>();
   let autoScrollTimer: ReturnType<typeof setTimeout> | undefined;
   let programmaticScroll = false;
   let lines = $derived(splitText(text));
+  let translationLines = $derived(translation ? splitText(translation.text) : []);
   let activeLineIndex = $derived(getActiveLineIndex(timings, currentTimeMs));
   let timingByLine = $derived(new Map(timings.map((timing) => [timing.lineIndex, timing])));
-  let rootClass = $derived(`lyrics lyrics-${language} lyrics-${scrollMode}`);
+  let rootClass = $derived(
+    `lyrics lyrics-${scrollMode}${translation ? '' : ` lyrics-${language}`}`
+  );
 
   function hasTextSelection(): boolean {
     return Boolean(document.getSelection()?.toString());
@@ -132,13 +140,31 @@
   {:else}
     <div class="line-list">
       {#each lines as line, index (index)}
-        <p
-          class={lineClass(index, line)}
-          data-line-index={index}
-          aria-current={activeLineIndex === index ? 'true' : undefined}
-        >
-          {#if line}{line}{:else}<span aria-hidden="true">&nbsp;</span>{/if}
-        </p>
+        <div class:paired-row={Boolean(translation)} class="lyric-row" data-line-index={index}>
+          <span class="line-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <div class="lyric-cell lyrics-ja">
+            <p
+              class={lineClass(index, line)}
+              data-line-index={index}
+              aria-current={activeLineIndex === index ? 'true' : undefined}
+            >
+              {#if line}{line}{:else}<span aria-hidden="true">&nbsp;</span>{/if}
+            </p>
+          </div>
+          {#if translation}
+            <div class={`lyric-cell lyrics-${translation.language}`}>
+              <p
+                class={lineClass(index, translationLines[index] ?? '')}
+                data-line-index={index}
+                aria-current={activeLineIndex === index ? 'true' : undefined}
+              >
+                {#if translationLines[index]}{translationLines[index]}{:else}<span
+                    aria-hidden="true">&nbsp;</span
+                  >{/if}
+              </p>
+            </div>
+          {/if}
+        </div>
       {/each}
     </div>
   {/if}
@@ -186,6 +212,30 @@
   .line-list {
     display: grid;
     gap: 0.35rem;
+  }
+
+  .lyric-row {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .paired-row {
+    grid-template-columns: 2.5rem repeat(2, minmax(0, 1fr));
+  }
+
+  .line-number {
+    padding-top: 0.8rem;
+    color: var(--muted, #64636a);
+    font:
+      700 0.7rem/1 'Courier New',
+      monospace;
+    text-align: right;
+  }
+
+  .lyric-cell {
+    min-width: 0;
   }
 
   .lyric-line {
@@ -236,6 +286,21 @@
   @media (prefers-reduced-motion: reduce) {
     .lyric-line {
       transition: none;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .paired-row {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+
+    .paired-row .lyrics-ru,
+    .paired-row .lyrics-en {
+      grid-column: 2;
+    }
+
+    .paired-row .line-number {
+      grid-row: 1 / span 2;
     }
   }
 </style>

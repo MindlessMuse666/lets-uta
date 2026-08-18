@@ -22,3 +22,11 @@ test('seeded library intersects title, language and artist filters', async ({ pa
   await expect(page.getByText('Aoi Kestrel')).toBeVisible();
   await expect(page.getByRole('link', { name: /Сигнал после дождя/ })).toHaveCount(0);
 });
+
+test('seeded library includes the HEAVEN reference mock', async ({ page }) => {
+  await page.goto('/');
+
+  await expect(page.getByRole('link', { name: /HEAVEN/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Paper Satellites/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Сигнал после дождя/ })).toBeVisible();
+});

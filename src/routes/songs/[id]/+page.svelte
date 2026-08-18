@@ -163,58 +163,61 @@
     </div>
   </header>
 
-  <section class="player-section" aria-labelledby="player-heading">
+  <section class="performance-section" aria-label="Воспроизведение и синхронизация">
     <div class="section-heading">
-      <p class="eyebrow">СЦЕНА / ВОСПРОИЗВЕДЕНИЕ</p>
-      <h2 id="player-heading">Плеер</h2>
+      <p class="eyebrow">СЦЕНА / ПОСЛЕДОВАТЕЛЬНОСТЬ</p>
+      <h2>Плеер</h2>
     </div>
-    <MediaPlayer
-      src={resolve(`/songs/${data.song.id}/media`)}
-      mediaKind={data.song.mediaKind}
-      durationMs={data.song.durationMs}
-      oncurrenttimechange={handleCurrentTimeChange}
-      onplaystatechange={handlePlayStateChange}
-    />
-    <div class="sync-panel" aria-labelledby="sync-heading">
-      <div class="sync-copy">
-        <p class="eyebrow">LOCAL PIPELINE</p>
-        <h3 id="sync-heading">Автоматическая синхронизация</h3>
-        <p>
-          Локальный элайнер подготовит построчные тайминги, не меняя старый результат до успеха.
-        </p>
+    <div class="performance-flow">
+      <div class="player-panel" aria-labelledby="player-heading">
+        <h3 id="player-heading">Слушать и смотреть</h3>
+        <MediaPlayer
+          src={resolve(`/songs/${data.song.id}/media`)}
+          mediaKind={data.song.mediaKind}
+          durationMs={data.song.durationMs}
+          oncurrenttimechange={handleCurrentTimeChange}
+          onplaystatechange={handlePlayStateChange}
+        />
       </div>
-      <div class="sync-actions">
-        <button
-          class="sync-button"
-          type="button"
-          onclick={startSync}
-          disabled={syncBusy || syncStarting || !primaryLyric}
-        >
-          {syncStarting ? 'Запуск…' : syncBusy ? syncStatusLabel : 'Синхронизировать'}
-        </button>
-        {#if syncBusy}
-          <button class="sync-cancel" type="button" onclick={cancelSync}>Отменить</button>
-        {/if}
-      </div>
-      {#if syncJob}
-        <div class="sync-status" aria-live="polite">
-          <strong>{syncStatusLabel}</strong>
-          <ProgressBar value={syncJob.progress} label="Прогресс синхронизации" />
-          {#if syncJob.status === 'running' || syncJob.status === 'queued'}
-            <span>{syncJob.processedLines} из {syncJob.totalLines} строк</span>
-          {:else if syncJob.message}
-            <span>{syncJob.message}</span>
+      <div class="sync-panel" aria-labelledby="sync-heading">
+        <div class="sync-copy">
+          <p class="eyebrow">LOCAL PIPELINE</p>
+          <h3 id="sync-heading">Автоматическая синхронизация</h3>
+          <p>
+            Следующий шаг после прослушивания: локальный элайнер подготовит построчные тайминги, не
+            меняя старый результат до успеха.
+          </p>
+        </div>
+        <div class="sync-actions">
+          <button
+            class="sync-button"
+            type="button"
+            onclick={startSync}
+            disabled={syncBusy || syncStarting || !primaryLyric}
+          >
+            {syncStarting ? 'Запуск…' : syncBusy ? syncStatusLabel : 'Синхронизировать'}
+          </button>
+          {#if syncBusy}
+            <button class="sync-cancel" type="button" onclick={cancelSync}>Отменить</button>
           {/if}
         </div>
-      {/if}
-      {#if syncError}<p class="sync-error" role="alert">{syncError}</p>{/if}
+        {#if syncJob}
+          <div class="sync-status" aria-live="polite">
+            <strong>{syncStatusLabel}</strong>
+            <ProgressBar value={syncJob.progress} label="Прогресс синхронизации" />
+            {#if syncJob.status === 'running' || syncJob.status === 'queued'}
+              <span>{syncJob.processedLines} из {syncJob.totalLines} строк</span>
+            {:else if syncJob.message}
+              <span>{syncJob.message}</span>
+            {/if}
+          </div>
+        {/if}
+        {#if syncError}<p class="sync-error" role="alert">{syncError}</p>{/if}
+      </div>
     </div>
   </section>
 
-  <section
-    class={`song-content ${translationLyric ? 'song-content-pair' : 'song-content-single'}`}
-    aria-labelledby="lyrics-heading"
-  >
+  <section class="song-content" aria-labelledby="lyrics-heading">
     <div class="section-heading">
       <p class="eyebrow">основной текст / ja</p>
       <h2 id="lyrics-heading">Караоке</h2>
@@ -223,49 +226,24 @@
       {/if}
     </div>
     {#if primaryLyric}
-      <div class="lyrics-stage">
-        <article class="lyrics-column primary-column" aria-labelledby="primary-lyrics-heading">
-          <div class="column-head">
-            <p class="column-mark">ja / primary</p>
-            <h3 id="primary-lyrics-heading">日本語</h3>
-          </div>
-          <LyricLines
-            text={primaryLyric.text}
-            timings={primaryTimings}
-            {currentTimeMs}
-            language="ja"
-            label="Японский текст"
-            {isPlaying}
-            autoScrollDelayMs={data.settings.autoScrollDelayMs}
-            scrollMode={lyricScrollMode}
-          />
-        </article>
+      <div class={`lyrics-head ${translationLyric ? 'has-translation' : ''}`}>
+        <div class="lyrics-heading-column">
+          <p class="column-mark">ja / primary</p>
+          <h3 id="primary-lyrics-heading">日本語</h3>
+        </div>
         {#if translationLyric}
-          <article
-            class={`lyrics-column translation-column translation-${translationLyric.language}`}
-            aria-labelledby="translation-lyrics-heading"
-          >
-            <div class="column-head">
-              <p class="column-mark">{translationLyric.language} / translation</p>
-              <h3 id="translation-lyrics-heading">
-                {translationLyric.language === 'ru' ? 'Русский' : 'English'}
-              </h3>
-            </div>
-            <LyricLines
-              text={translationLyric.text}
-              timings={primaryTimings}
-              {currentTimeMs}
-              language={translationLyric.language}
-              label="Перевод"
-              {isPlaying}
-              autoScrollDelayMs={data.settings.autoScrollDelayMs}
-              scrollMode={lyricScrollMode}
-            />
-          </article>
+          <div class={`lyrics-heading-column translation-${translationLyric.language}`}>
+            <p class="column-mark">{translationLyric.language} / translation</p>
+            <h3 id="translation-lyrics-heading">
+              {translationLyric.language === 'ru' ? 'Русский' : 'English'}
+            </h3>
+          </div>
         {:else}
           <aside class="translation-panel" aria-labelledby="translation-panel-heading">
-            <p class="column-mark">translation / optional</p>
-            <h3 id="translation-panel-heading">Перевод</h3>
+            <div>
+              <p class="column-mark">translation / optional</p>
+              <h3 id="translation-panel-heading">Перевод</h3>
+            </div>
             <p>Добавь русский или английский текст с тем же количеством строк.</p>
             <button
               class="translation-open"
@@ -278,6 +256,19 @@
           </aside>
         {/if}
       </div>
+      <LyricLines
+        text={primaryLyric.text}
+        timings={primaryTimings}
+        {currentTimeMs}
+        language="ja"
+        label="Японский текст и перевод"
+        {isPlaying}
+        autoScrollDelayMs={data.settings.autoScrollDelayMs}
+        scrollMode={lyricScrollMode}
+        translation={translationLyric
+          ? { language: translationLyric.language as 'ru' | 'en', text: translationLyric.text }
+          : undefined}
+      />
     {:else}
       <p class="lyrics-missing">Основной текст ещё не добавлен.</p>
     {/if}
@@ -377,13 +368,37 @@
     gap: 0.4rem;
   }
 
-  .player-section,
+  .performance-section,
   .song-content {
-    display: grid;
-    grid-template-columns: minmax(12rem, 0.4fr) minmax(0, 1fr);
-    gap: 3rem;
+    display: block;
     padding: 1.5rem 0;
     border-top: 1px solid #1f2024;
+  }
+
+  .performance-flow {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .player-panel,
+  .sync-panel {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid rgba(31, 32, 36, 0.3);
+    background: var(--surface-strong, #f8f4eb);
+  }
+
+  .player-panel > h3 {
+    margin: 0 0 0.8rem;
+    font-size: 1rem;
+  }
+
+  .player-panel :global(.player) {
+    padding: 0;
+    border: 0;
+    background: transparent;
   }
 
   .sync-panel {
@@ -391,9 +406,6 @@
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 1rem 2rem;
     align-items: end;
-    margin-top: 1rem;
-    padding: 1rem 0 0;
-    border-top: 1px solid rgba(31, 32, 36, 0.22);
   }
   .sync-copy h3 {
     margin: 0;
@@ -477,23 +489,14 @@
     line-height: 1.5;
   }
 
-  .lyrics-stage {
+  .lyrics-head {
     display: grid;
-    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1rem;
-    align-items: start;
+    margin: 1.5rem 0 0.8rem;
   }
 
-  .song-content-single .lyrics-stage {
-    grid-template-columns: minmax(0, 42rem) minmax(12rem, 18rem);
-    justify-content: center;
-  }
-
-  .song-content-pair .lyrics-stage {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .lyrics-column,
+  .lyrics-heading-column,
   .translation-panel {
     display: grid;
     min-width: 0;
@@ -503,25 +506,16 @@
     border-top: 4px solid #ff4081;
   }
 
-  .translation-column {
+  .lyrics-heading-column.translation-ru {
     border-top-color: #00e5ff;
   }
 
-  .translation-en {
+  .lyrics-heading-column.translation-en {
     border-top-color: #ffd543;
   }
 
   .translation-panel {
     border-top-color: #00e5ff;
-  }
-
-  .column-head {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: baseline;
-    border-bottom: 1px solid rgba(31, 32, 36, 0.22);
-    padding-bottom: 0.5rem;
   }
 
   .column-mark {
@@ -620,16 +614,7 @@
       font-size: 3.7rem;
     }
 
-    .player-section,
-    .song-content {
-      grid-template-columns: 1fr;
-      gap: 1.25rem;
-    }
-
-    .song-content-single .lyrics-stage,
-    .song-content-pair .lyrics-stage {
-      grid-template-columns: 1fr;
-    }
+    .performance-flow,
     .sync-panel {
       grid-template-columns: 1fr;
     }
@@ -647,9 +632,12 @@
       font-size: 3rem;
     }
 
-    .column-head {
-      display: grid;
-      gap: 0.4rem;
+    .lyrics-head {
+      grid-template-columns: 1fr;
+    }
+
+    .translation-panel {
+      grid-template-columns: 1fr;
     }
   }
 </style>
